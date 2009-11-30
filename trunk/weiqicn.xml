@@ -446,14 +446,14 @@
 
         var msg = '';
         if (gameState.winner != -1) {
-          msg = gameState.winner == COLOR.white ? '°×Ê¤!' : 'ºÚÊ¤!';
+          msg = gameState.winner == COLOR.white ? 'ç™½èƒœ!' : 'é»‘èƒœ!';
           hideElement('resign');
           showElement('rematch');
         } else {
           if (gameState.current == COLOR.white) {
-            msg = '°×·½Âä×Ó';
+            msg = 'ç™½æ–¹è½å­';
           } else {
-            msg = 'ºÚ·½Âä×Ó';
+            msg = 'é»‘æ–¹è½å­';
           }
           hideElement('rematch');
         }
@@ -567,9 +567,9 @@
             <table border="0">
               <tr>
                 <td align="right" valign="top">
-                  <a id="resign" class="hide" href="#" onclick="resign(); return false;">ÈÏÊä</a>
-                  <a id="rematch" class="hide" href="#" onclick="rematch(); return false;">ÖØÀ´</a>
-                  <a id="leave" class="hide" href="#" onclick="leave(); return false;">Àë¿ª</a>
+                  <a id="resign" class="hide" href="#" onclick="resign(); return false;">è®¤è¾“</a>
+                  <a id="rematch" class="hide" href="#" onclick="rematch(); return false;">é‡æ¥</a>
+                  <a id="leave" class="hide" href="#" onclick="leave(); return false;">ç¦»å¼€</a>
                 </td>
               </tr>
               <tr>
@@ -583,7 +583,7 @@
         <tr>
           <tr>
             <td align="center" valign="top">
-              <div id="info">ºÚ·½Âä×Ó</div>
+              <div id="info">é»‘æ–¹è½å­</div>
             </td>
         </tr>
       </table>
@@ -592,7 +592,7 @@
     <div id="void" class="hide">
       <div id="selectColor">
         <center>
-          Ñ¡ÔñÑÕÉ«£¬Ö´ºÚÏÈĞĞ:</br>
+          é€‰æ‹©é¢œè‰²ï¼Œæ‰§é»‘å…ˆè¡Œ:</br>
           <table>
             <tr>
               <td width="20">

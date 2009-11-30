@@ -3,6 +3,7 @@
 <!-- Adapted to "Google Wave Preview" by StXh -->
 <!-- Modify from Google Chess sample -->
 <!-- v0.5 2009-11-27 11:22:46 -->
+<!-- http://weiqi-gadget.googlecode.com/svn/trunk/weiqi.xml -->
 <Module>
   <ModulePrefs title="weiqi" width="400" height="440">
     <Optional feature="content-rewrite">
@@ -36,7 +37,7 @@
         height: 203px;
       }
       #board {
-        background-image: url('http://stxh007.googlepages.com/weiqiboard.png');
+        background-image: url('http://weiqi-gadget.googlecode.com/svn/trunk/weiqiboard.png');
         background-position: left;
         width: 400px;
         height: 400px;
@@ -83,7 +84,7 @@
     <script type="text/javascript" src="http://wave-api.appspot.com/public/wave.js"></script>
     <script type="text/javascript" src="http://www.JSON.org/json2.js"></script>
     <script type="text/javascript">
-      HOST = 'http://stxh007.googlepages.com/';
+      HOST = 'http://weiqi-gadget.googlecode.com/svn/trunk/';
       SQUARE_SIZE = 20;
       CURSOR_BORDER = 2;
 

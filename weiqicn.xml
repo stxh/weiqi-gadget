@@ -446,20 +446,35 @@
 
         var msg = '';
         if (gameState.winner != -1) {
-          msg = gameState.winner == COLOR.white ? 'White' : 'Black';
-          msg += ' wins!';
+          msg = gameState.winner == COLOR.white ? '白胜!' : '黑胜!';
           hideElement('resign');
           showElement('rematch');
         } else {
           if (gameState.current == COLOR.white) {
-            msg = 'White to Move';
+            msg = '白方落子';
           } else {
-            msg = 'Black to Move';
+            msg = '黑方落子';
           }
           hideElement('rematch');
         }
         setInfo(msg);
       };
+
+      function resign() {
+        gameState.winner = getOpponentColor();
+        updateGameState();
+      }
+
+      function leave() {
+        if (playerId == gameState.black) {gameState.black=null};
+        if (playerId == gameState.white) {gameState.white=null};
+        updateGameState();
+      }
+
+      function rematch() {
+        resetGame();
+        updateGameState();
+      }
 
       function resetGame() {
         gameState.current = COLOR.black;
@@ -552,8 +567,9 @@
             <table border="0">
               <tr>
                 <td align="right" valign="top">
-                  <a id="resign" class="hide" href="#" onclick="resign(); return false;">Resign</a>
-                  <a id="rematch" class="hide" href="#" onclick="rematch(); return false;">Rematch</a>
+                  <a id="resign" class="hide" href="#" onclick="resign(); return false;">认输</a>
+                  <a id="rematch" class="hide" href="#" onclick="rematch(); return false;">重来</a>
+                  <a id="leave" class="hide" href="#" onclick="leave(); return false;">离开</a>
                 </td>
               </tr>
               <tr>
@@ -567,7 +583,7 @@
         <tr>
           <tr>
             <td align="center" valign="top">
-              <div id="info">White's Move</div>
+              <div id="info">黑方落子</div>
             </td>
         </tr>
       </table>
@@ -576,7 +592,7 @@
     <div id="void" class="hide">
       <div id="selectColor">
         <center>
-          Choose color:</br>
+          选择颜色，执黑先行:</br>
           <table>
             <tr>
               <td width="20">

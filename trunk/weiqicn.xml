@@ -569,7 +569,7 @@
                 <td align="right" valign="top">
                   <a id="resign" class="hide" href="#" onclick="resign(); return false;">认输</a>
                   <a id="rematch" class="hide" href="#" onclick="rematch(); return false;">重来</a>
-                  <a id="leave" class="hide" href="#" onclick="leave(); return false;">离开</a>
+                  <a id="leave" href="#" onclick="leave(); return false;">离开</a>
                 </td>
               </tr>
               <tr>

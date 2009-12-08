@@ -461,6 +461,22 @@
         setInfo(msg);
       };
 
+      function resign() {
+        gameState.winner = getOpponentColor();
+        updateGameState();
+      }
+
+      function leave() {
+        if (playerId == gameState.black) {gameState.black=null};
+        if (playerId == gameState.white) {gameState.white=null};
+        updateGameState();
+      }
+
+      function rematch() {
+        resetGame();
+        updateGameState();
+      }
+
       function resetGame() {
         gameState.current = COLOR.black;
         gameState.moveHistory = [];
@@ -554,6 +570,7 @@
                 <td align="right" valign="top">
                   <a id="resign" class="hide" href="#" onclick="resign(); return false;">Resign</a>
                   <a id="rematch" class="hide" href="#" onclick="rematch(); return false;">Rematch</a>
+                  <a id="leave" href="#" onclick="leave(); return false;">Àë¿ª</a>
                 </td>
               </tr>
               <tr>

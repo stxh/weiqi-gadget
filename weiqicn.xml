@@ -254,7 +254,7 @@
       }
 
       function selectColor(color) {
-        if (color == COLOR.white) {
+        if (color == COLOR.black) {
           gameState.black = playerId;
           gameState.white = opponentId;
         } else {
@@ -596,10 +596,10 @@
           <table>
             <tr>
               <td width="20">
-                <img class="selectable piece" onclick="selectColor(COLOR.black);" src="http://weiqi-gadget.googlecode.com/svn/trunk/b.png"/>
+                <img class="selectable piece" onclick="selectColor(COLOR.black);return false;" src="http://weiqi-gadget.googlecode.com/svn/trunk/b.png"/>
               </td>
               <td width="20">
-                <img class="selectable piece" onclick="selectColor(COLOR.white);" src="http://weiqi-gadget.googlecode.com/svn/trunk/w.png"/>
+                <img class="selectable piece" onclick="selectColor(COLOR.white);return false;" src="http://weiqi-gadget.googlecode.com/svn/trunk/w.png"/>
               </td>
             </tr>
           </table>

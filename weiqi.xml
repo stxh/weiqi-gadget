@@ -83,7 +83,6 @@
     </style>
     <script type="text/javascript" src="http://wave-api.appspot.com/public/wave.js"></script>
     <script type="text/javascript" src="http://www.JSON.org/json2.js"></script>
-    <script id="LangJS" type="text/javascript" src="lang.js"></script>
     <script type="text/javascript">
       HOST = 'http://weiqi-gadget.googlecode.com/svn/trunk/';
       SQUARE_SIZE = 20;
@@ -98,34 +97,24 @@
         'black': 2
       };
 
-		capturedPieces = [];
+      capturedPieces = [];
 
-		board = null;
-		playerId = undefined;
-		opponentId = undefined;
-		justSelectColor=true;
-		lang="en";
+      board = null;
+      playerId = undefined;
+      opponentId = undefined;
+	  justSelectColor=true;
 
-		gameState = {
-			board: null,
-			moveHistory: [],
-			current: COLOR.black,
-			winner: -1,
-			black: undefined
-		};
+      gameState = {
+        board: null,
+        moveHistory: [],
+        current: COLOR.black,
+        winner: -1,
+        black: undefined
+      };
 
-		window.$ = function(id) {
-			return document.getElementById(id);
-		};
-
-		function changeLang(lang)
-		{
-		   var e = $("LangJS");
-		   var h=document.getElementsByTagName("head");
-		   h[0].removeChild(e);
-		   e.src = "lang."+lang+".js";
-		   h[0].appendChild(e);
-		}
+      window.$ = function(id) {
+        return document.getElementById(id);
+      };
 
       function showElement(name) {
         $(name).className = '';
@@ -558,12 +547,6 @@
       }
 
       function init() {
-		for (lo in langOption) {
-	        var o=document.createElement('option');
-			o.text=langOption[lo].text;
-			o.value=langOption[lo].value;
-			$("targetLanguage").add(o,null);
-		}
           if (wave && wave.isInWaveContainer()) {
               wave.setStateCallback(onStateChange);
               wave.setParticipantCallback(onParticipantsChange);
@@ -593,9 +576,7 @@
                 <td align="right" valign="top">
                   <a id="resign" class="hide" href="#" onclick="resign(); return false;">Resign</a>
                   <a id="rematch" class="hide" href="#" onclick="rematch(); return false;">Rematch</a>
-                  <a id="leave" href="#" onclick="leave(); return false;">Leave</a>
-					<select id="targetLanguage" name="targetLanguage" onchange="onLanguageChange()">
-					</select>
+                  <a id="leave" href="#" onclick="leave(); return false;">leave</a>
                 </td>
               </tr>
               <tr>

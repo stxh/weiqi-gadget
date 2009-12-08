@@ -1,0 +1,617 @@
+<!-- GWeiQi Copyright 2009 StXh <stxh007@gmail.com> -->
+<!-- All Rights Reserved -->
+<!-- Adapted to "Google Wave Preview" by StXh -->
+<!-- Modify from Google Chess sample -->
+<!-- v0.5 2009-11-27 11:22:46 -->
+<!-- http://weiqi-gadget.googlecode.com/svn/trunk/weiqi.xml -->
+<Module>
+  <ModulePrefs title="weiqi" width="400" height="440">
+    <Optional feature="content-rewrite">
+      <Param name="include-tags"/>
+    </Optional>
+    <Require feature="wave"/>
+  </ModulePrefs>
+
+  <Content type="html">
+    <![CDATA[
+	<style type="text/css">
+      body {
+        font-family: 'lucida grande','tahoma','arial','verdana','sans-serif';
+        font-size: 11px;
+      }
+      td {
+        font-size: 11px;
+      }
+      a {
+        text-decoration: none;
+        color: #3366CC;
+      }
+      a:visited {
+        color: #3366CC;
+      }
+      a:hover {
+        color: red;
+      }
+      #canvas {
+        width: 223px;
+        height: 203px;
+      }
+      #board {
+        background-image: url('http://weiqi-gadget.googlecode.com/svn/trunk/weiqiboard.png');
+        background-position: left;
+        width: 400px;
+        height: 400px;
+        position: relative;
+      }
+      #promotion, #selectColor, #help {
+        border: 1px solid black;
+        width: 128px;
+        height: 40px;
+        left: 16px;
+        top: 60px;
+        position: absolute;
+        background-color: white;
+      }
+      #help {
+        width: 160px;
+        height: 160px;
+        left: 0px;
+        top: 0px;
+      }
+      .hide {
+        display: none;
+      }
+      .piece {
+        border: 0;
+        width: 20px;
+        height: 20px;
+        position: absolute;
+      }
+      .cursor {
+        border: 2px solid yellow;
+        width: 20px;
+        height: 20px;
+        position: absolute;
+      }
+      .expand {
+        width: 100%;
+        height: 100%;
+      }
+      .selectable {
+        cursor: pointer;
+      }
+    </style>
+    <script type="text/javascript" src="http://wave-api.appspot.com/public/wave.js"></script>
+    <script type="text/javascript" src="http://www.JSON.org/json2.js"></script>
+    <script type="text/javascript">
+      HOST = 'http://weiqi-gadget.googlecode.com/svn/trunk/';
+      SQUARE_SIZE = 20;
+      CURSOR_BORDER = 2;
+
+      EMPTY_SPACE = 0;
+
+	  GAME_SIZE = 19;
+
+      COLOR = {
+        'white': 1,
+        'black': 2
+      };
+
+      capturedPieces = [];
+
+      board = null;
+      playerId = undefined;
+      opponentId = undefined;
+	  justSelectColor=true;
+
+      gameState = {
+        board: null,
+        moveHistory: [],
+        current: COLOR.black,
+        winner: -1,
+        black: undefined
+      };
+
+      window.$ = function(id) {
+        return document.getElementById(id);
+      };
+
+      function showElement(name) {
+        $(name).className = '';
+      }
+
+      function hideElement(name) {
+        $(name).className = 'hide';
+      }
+
+      function clearChildren(el) {
+        while (el.firstChild) {
+          el.removeChild(el.firstChild);
+        }
+      }
+
+      function Pos(row, col) {
+        this.row = row;
+        this.col = col;
+      }
+
+	  function Piece(BW,index) {
+		this.BW=BW;
+		this.index=index;
+	  }
+
+      function Move(piece, pos) {
+        this.piece = piece;
+        this.pos = pos;
+      }
+
+      function recordMove(piece,pos) {
+        var move = new Move(piece, pos);
+        gameState.moveHistory.push(move);
+      }
+
+      function capturePiece(code) {
+        capturedPieces.push(code);
+      }
+
+      function isMyTurn() {
+        return !self.gameOver && gameState.current == getMyColor();
+      }
+
+      function newPos(x, y) {
+        return {'x': x, 'y': y};
+      }
+
+      function newCoords(row, col) {
+        return {'row' : row, 'col': col};
+      }
+
+      function coordsToPos(coords) {
+        var x = SQUARE_SIZE * coords.col+SQUARE_SIZE/2;
+        var y = SQUARE_SIZE * coords.row+SQUARE_SIZE/2;
+        return newPos(x, y);
+      }
+
+      function posToCoords(pos) {
+        boardPos = getElementPos(board.root);
+        var y = (pos.y - boardPos.y - SQUARE_SIZE/2) / SQUARE_SIZE;
+        var x = (pos.x - boardPos.x - SQUARE_SIZE/2) / SQUARE_SIZE;
+        y = Math.floor(y);
+        x = Math.floor(x);
+        return newCoords(y, x);
+      }
+
+      function coordsValid(c) {
+        return c.col >= 0 && c.col < GAME_SIZE &&
+               c.row >= 0 && c.row < GAME_SIZE;
+      }
+
+      function coordsEqual(a, b) {
+        if (a && b) {
+          return a.row == b.row && a.col == b.col;
+        }
+        return false;
+      }
+
+      function setPos(el, pos) {
+        el.style.left = pos.x + 'px';
+        el.style.top = pos.y + 'px';
+      }
+
+      function codeToImage(code) {
+        var img = document.createElement('img');
+        var color = getColor(code);
+        var src = (color == COLOR.white ? 'w' : 'b')+'.png';
+        img.src = HOST  + src;
+        img.className = 'piece';
+        return img;
+      }
+
+      function getColor(ch) {
+        return ch;
+      }
+
+      function getOtherColor(color) {
+        return color == COLOR.white ? COLOR.black : COLOR.white;
+      }
+
+      function getElementPos(el) {
+        var x = 0;
+        var y = 0;
+        if (el.offsetParent) {
+          do {
+            x += el.offsetLeft;
+            y += el.offsetTop;
+          } while (el = el.offsetParent);
+        }
+        return newPos(x, y);
+      }
+
+      function getMousePos(e) {
+      	var x = 0;
+      	var y = 0;
+      	if (!e) {
+      	  e = window.event;
+        }
+      	if (e.pageX || e.pageY) {
+      		x = e.pageX;
+      		y = e.pageY;
+      	}
+      	else if (e.clientX || e.clientY) {
+      		x = e.clientX + document.body.scrollLeft
+      			  + document.documentElement.scrollLeft;
+      		y = e.clientY + document.body.scrollTop
+      			  + document.documentElement.scrollTop;
+      	}
+      	return newPos(x, y)
+      }
+
+      function changePointer(type) {
+        document.body.style.cursor = type;
+      }
+
+      function setInfo(msg) {
+        $('info').innerHTML = msg;
+      }
+
+      function selectColor(color) {
+        if (color == COLOR.black) {
+          gameState.black = playerId;
+          gameState.white = opponentId;
+        } else {
+          gameState.black = opponentId;
+          gameState.white = playerId;
+        }
+   	  justSelectColor=true;
+        updateGameState();
+      }
+
+      function getMyColor() {
+        return gameState.black == playerId ? COLOR.black : COLOR.white;
+      }
+
+      function getOpponentColor() {
+        return gameState.black == playerId ? COLOR.white : COLOR.black;
+      }
+
+      function Board() {
+        var self = this;
+        this.root = $('board');
+        clearChildren(this.root);
+
+		this.state=new Array(GAME_SIZE);
+		for (var i=0;i <GAME_SIZE; i++) {
+			this.state[i]=new Array(GAME_SIZE);
+			for (var j=0; j< GAME_SIZE; j++) {
+				this.state[i][j]=EMPTY_SPACE;
+			}
+		}
+        this.gameOver = false;
+      }
+
+      Board.onClick = function(e) {
+        if (!board) {
+          return;
+        }
+        if (!isMyTurn()) {
+          return;
+        }
+		if (justSelectColor) {
+        	justSelectColor=false;
+			return;
+		}
+        var pos = getMousePos(e);
+        coords = posToCoords(pos);
+		if (!board.isValidMove(coords)) return;
+
+		board.putAStone(coords);
+      };
+
+      Board.prototype.putAStone = function(coords) {
+		var ch=getMyColor();
+
+        this.state[coords.row][coords.col]=ch;
+
+        this.checkCapture(ch);
+
+		this.render();
+		this.endTurn();
+      };
+
+      Board.prototype.checkCapture = function(ch) {
+		this.checkCaptureColor(getOtherColor(ch));
+		this.checkCaptureColor(ch);
+	  }
+
+      Board.prototype.checkCaptureColor = function(ch) {
+		var groupList=[];
+		//group opponent
+		for (var i=0;i <GAME_SIZE; i++) {
+			for (var j=0; j< GAME_SIZE; j++) {
+				if (this.state[i][j]==ch) {
+					var ofGroup=false;
+					for (tG in groupList) {
+						var inGroup=null;
+						var tGroup=groupList[tG];
+						for (tC in tGroup) {
+							if (tGroup[tC] == (i-1)*GAME_SIZE+j
+								|| tGroup[tC] == (i+1)*GAME_SIZE+j
+								|| tGroup[tC] == i*GAME_SIZE+j+1
+								|| tGroup[tC] == i*GAME_SIZE+j-1) {
+								ofGroup=true;
+								if (!inGroup) {
+									inGroup=groupList[tG];
+									inGroup.push(i*GAME_SIZE+j);
+								} else {
+									inGroup.push(groupList[tG]);
+									groupList[tG]=null;
+								}
+							}
+						}
+					}
+					if (!ofGroup) {
+						var newGroup=[];
+						newGroup.push(i*GAME_SIZE+j);
+						groupList.push(newGroup);
+					}
+				}
+			}
+		}
+		//group air and capture
+		for (tG in groupList) {
+			var bAir=false;
+			var tGroup=groupList[tG];
+			for (tC in tGroup) {
+				if (this.haveAir(tGroup[tC])) {
+					bAir=true;
+					break;
+				}
+			}
+			if (!bAir) {
+				for (tC in groupList[tG]) {
+				var tGroup=groupList[tG];
+					this.state[Math.floor(tGroup[tC]/GAME_SIZE)][tGroup[tC] % GAME_SIZE]=EMPTY_SPACE;
+				}
+			}
+		}
+      };
+
+      Board.prototype.haveAir = function(tC) {
+		var row=Math.floor(tC/GAME_SIZE);
+		var col=tC % GAME_SIZE;
+		//up
+		if (row-1 > 0) {
+			if (this.state[row-1][col] == EMPTY_SPACE) return true;
+		}
+		//down
+		if (row+1 < GAME_SIZE) {
+			if (this.state[row+1][col] == EMPTY_SPACE) return true;
+		}
+		//left
+		if (col-1 > 0) {
+			if (this.state[row][col-1] == EMPTY_SPACE) return true;
+		}
+		//right
+		if (col+1 < GAME_SIZE) {
+			if (this.state[row][col+1] == EMPTY_SPACE) return true;
+		}
+		return false;
+	  }
+
+      Board.onMouseMove = function(e) {
+      };
+
+      Board.onMouseOut = function(e) {
+        changePointer('default');
+      };
+
+      Board.prototype.setState = function(state) {
+        this.state = JSON.parse(state);
+      }
+
+      Board.prototype.isValidMove = function(coords) {
+		//alert("row="+coords.row+" col="+coords.col);
+		if (coords.row<0 || coords.col<0 || coords.row>GAME_SIZE-1 || coords.col>GAME_SIZE-1) return false;
+		if (board.state[coords.row][coords.col] != EMPTY_SPACE) return false;
+        return true;
+      };
+
+      Board.prototype.endTurn = function() {
+        gameState.current = getOtherColor(gameState.current);
+        updateGameState();
+      };
+
+      Board.prototype.clearBoard = function() {
+        $('void').appendChild($('selectColor'));
+        clearChildren(this.root);
+      }
+
+      Board.prototype.render = function() {
+        this.clearBoard();
+
+        for (var i = 0; i < GAME_SIZE; ++i) {
+          for (var j = 0; j < GAME_SIZE; ++j) {
+            var ch = this.state[i][j];
+            if (ch == EMPTY_SPACE) {
+              continue;
+            }
+            var img = codeToImage(ch);
+            var coords = newCoords(i, j);
+            setPos(img, coordsToPos(coords));
+            this.root.appendChild(img);
+          }
+        }
+
+        if (!gameState.black) {
+          if (opponentId)
+            this.root.appendChild($('selectColor'));
+          hideElement('resign');
+        } else {
+          showElement('resign');
+        }
+
+        var msg = '';
+        if (gameState.winner != -1) {
+          msg = gameState.winner == COLOR.white ? '白胜!' : '黑胜!';
+          hideElement('resign');
+          showElement('rematch');
+        } else {
+          if (gameState.current == COLOR.white) {
+            msg = '白方落子';
+          } else {
+            msg = '黑方落子';
+          }
+          hideElement('rematch');
+        }
+        setInfo(msg);
+      };
+
+      function resign() {
+        gameState.winner = getOpponentColor();
+        updateGameState();
+      }
+
+      function leave() {
+        if (playerId == gameState.black) {gameState.black=null};
+        if (playerId == gameState.white) {gameState.white=null};
+        updateGameState();
+      }
+
+      function rematch() {
+        resetGame();
+        updateGameState();
+      }
+
+      function resetGame() {
+        gameState.current = COLOR.black;
+        gameState.moveHistory = [];
+        gameState.winner = -1;
+        gameState.black = undefined;
+        capturedPieces = [];
+        board = new Board();
+        board.render();
+      }
+
+      function startGame(myId, otherIds) {
+        playerId = myId;
+        opponentId = otherIds[0];
+        resetGame();
+      }
+
+	function onStateChange(state) {
+		if (!state) {
+			return;
+		}
+
+		if (!board)
+			return;
+
+		if (!playerId)
+			playerId = wave.getViewer().getId();
+
+		var tempState = JSON.parse(state.get('gameState','{}'));
+		if (tempState&&tempState.board){
+			if (!opponentId&&tempState.white&&tempState.black){
+				opponentId = playerId==tempState.white?tempState.black:tempState.white;
+			}
+			gameState = tempState;
+			board.setState(gameState.board);
+			board.render();
+		}
+	}
+
+	function onParticipantsChange() {
+		if (opponentId||gameState.black)
+			return;
+
+		var parts = wave.getParticipants();
+		if (parts.length>1){
+			if (!playerId)
+				playerId = wave.getViewer().getId();
+			for(var i=0;i<parts.length;i++){
+				var id = parts[i].getId();
+				if (id!=playerId){
+					opponentId = id;
+					resetGame();
+					updateGameState();
+					return;
+				}
+			}
+		}
+	}
+
+      function updateGameState() {
+        gameState.board = JSON.stringify(board.state);
+        wave.getState().submitDelta({gameState:JSON.stringify(gameState)});
+      }
+
+      function init() {
+          if (wave && wave.isInWaveContainer()) {
+              wave.setStateCallback(onStateChange);
+              wave.setParticipantCallback(onParticipantsChange);
+              var board = $('board');
+              if (board.addEventListener) {
+                  board.addEventListener('click', Board.onClick, false);
+                  board.addEventListener('mousemove', Board.onMouseMove,false);
+                  board.addEventListener('mouseout', Board.onMouseOut,false);
+              } else {
+                  board.attachEvent('onclick', Board.onClick);
+                  board.attachEvent('onmousemove', Board.onMouseMove);
+                  board.attachEvent('onmouseout', Board.onMouseOut);
+              }
+          }
+      }
+
+	gadgets.util.registerOnLoadHandler(init);
+    </script>
+
+    <div id="canvas">
+      <table class="expand" border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td align="center" valign="center">
+
+            <table border="0">
+              <tr>
+                <td align="right" valign="top">
+                  <a id="resign" class="hide" href="#" onclick="resign(); return false;">认输</a>
+                  <a id="rematch" class="hide" href="#" onclick="rematch(); return false;">重来</a>
+                  <a id="leave" href="#" onclick="leave(); return false;">离开</a>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <div id="board">
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+        <tr>
+          <tr>
+            <td align="center" valign="top">
+              <div id="info">黑方落子</div>
+            </td>
+        </tr>
+      </table>
+      </div>
+    </div>
+    <div id="void" class="hide">
+      <div id="selectColor">
+        <center>
+          选择颜色，执黑先行:</br>
+          <table>
+            <tr>
+              <td width="20">
+                <img class="selectable piece" onclick="selectColor(COLOR.black);return false;" src="http://weiqi-gadget.googlecode.com/svn/trunk/b.png"/>
+              </td>
+              <td width="20">
+                <img class="selectable piece" onclick="selectColor(COLOR.white);return false;" src="http://weiqi-gadget.googlecode.com/svn/trunk/w.png"/>
+              </td>
+            </tr>
+          </table>
+        </center>
+      </div>
+    </div>
+    ]]>
+  </Content>
+</Module>

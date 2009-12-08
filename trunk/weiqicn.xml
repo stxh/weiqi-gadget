@@ -102,6 +102,7 @@
       board = null;
       playerId = undefined;
       opponentId = undefined;
+	  justSelectColor=true;
 
       gameState = {
         board: null,
@@ -261,6 +262,7 @@
           gameState.black = opponentId;
           gameState.white = playerId;
         }
+   	  justSelectColor=true;
         updateGameState();
       }
 
@@ -294,6 +296,10 @@
         if (!isMyTurn()) {
           return;
         }
+		if (justSelectColor) {
+        	justSelectColor=false;
+			return;
+		}
         var pos = getMousePos(e);
         coords = posToCoords(pos);
 		if (!board.isValidMove(coords)) return;

@@ -3,9 +3,9 @@
 <!-- Adapted to "Google Wave Preview" by StXh -->
 <!-- Modify from Google Chess sample -->
 <!-- v0.5 2009-11-27 11:22:46 -->
-<!-- http://weiqi-gadget.googlecode.com/svn/trunk/weiqi.xml -->
+<!-- http://weiqi-gadget.googlecode.com/svn/trunk/weiqi-test.xml -->
 <Module>
-  <ModulePrefs title="weiqi" width="400" height="440">
+  <ModulePrefs title="weiqi" width="400" height="480">
     <Optional feature="content-rewrite">
       <Param name="include-tags"/>
     </Optional>
@@ -486,15 +486,17 @@
         updateGameState();
       }
 
-      function leave() {
-        if (!isMyTurn()) {
-          return;
-        }
-
-        if (playerId == gameState.black) {gameState.black=null};
-        if (playerId == gameState.white) {gameState.white=null};
-        updateGameState();
-      }
+	function leave() {
+		var myID=wave.getViewer().getId();
+		if (myID == gameState.black) {
+		    gameState.black=null;
+		} else if (myID == gameState.white) {
+			gameState.white=null;
+		} else {
+			return;
+		}
+		updateGameState();
+	}
 
       function rematch() {
         resetGame();
@@ -599,7 +601,7 @@
 		<table class="expand" border="0" cellpadding="0" cellspacing="0">
 		<tr>
 			<td align="center" valign="top">
-				<img src="http://weiqi-gadget.googlecode.com/svn/trunk/b.png" /><div id="blackname">NA</div> vs <img src="http://weiqi-gadget.googlecode.com/svn/trunk/b.png" /><div id="whitename">NA</div>
+				<img src="http://weiqi-gadget.googlecode.com/svn/trunk/b.png" /><span id="blackname">NA</span> vs <img src="http://weiqi-gadget.googlecode.com/svn/trunk/w.png" /><span id="whitename">NA</span>
 			</td>
 		</tr>
 		<tr>

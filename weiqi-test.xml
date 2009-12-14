@@ -407,8 +407,8 @@
         }
         var pos = getMousePos(e);
         coords = posToCoords(pos);
-		if (board.isValidMove(coords)) board.changePointer("pointer");
-		else board.changePointer("default");
+		if (board.isValidMove(coords)) changePointer("pointer");
+		else changePointer("default");
       };
 
       Board.onMouseOut = function(e) {

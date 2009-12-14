@@ -594,6 +594,7 @@
 	}
 
 	function init() {
+		alert(langOption);
 		for (lo in langOption) {
 		    var o=document.createElement('option');
             // Add to options first, then init the option otherwish the option can't init.

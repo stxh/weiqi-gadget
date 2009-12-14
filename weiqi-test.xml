@@ -197,15 +197,10 @@
 
       function codeToImage(code) {
         var img = document.createElement('img');
-        var color = getColor(code);
-        var src = (color == COLOR.white ? 'w' : 'b')+'.png';
+        var src = (code == COLOR.white ? 'w' : 'b')+'.png';
         img.src = HOST  + src;
         img.className = 'piece';
         return img;
-      }
-
-      function getColor(ch) {
-        return ch;
       }
 
       function getOtherColor(color) {
@@ -249,6 +244,10 @@
 
       function setInfo(msg) {
         $('info').innerHTML = msg;
+      }
+
+      function showSGF(msg) {
+        $('sgf').innerHTML = msg;
       }
 
       function selectColor(color) {
@@ -311,7 +310,7 @@
 
         recordMove(ch,coords);
 
-        gameState.last=coords;
+        gameState.last = coords;
 
         this.checkCapture(ch);
 
@@ -466,6 +465,9 @@
           hideElement('rematch');
         }
         setInfo(msg);
+
+		// Show sgf
+		showSGF(gameState.moveHistory);
       };
 
       function resign() {
@@ -563,12 +565,14 @@
 	}
 
 	function init() {
+		/*
 		for (lo in langOption) {
 		    var o=document.createElement('option');
 			o.text=langOption[lo].text;
 			o.value=langOption[lo].value;
 			$("targetLanguage").add(o,null);
 		}
+		*/
 		if (wave && wave.isInWaveContainer()) {
 			wave.setStateCallback(onStateChange);
 			wave.setParticipantCallback(onParticipantsChange);
@@ -617,6 +621,11 @@
 		<tr>
 			<td align="center" valign="top">
 				<div id="info">White's Move</div>
+			</td>
+		</tr>
+		<tr>
+			<td align="left" valign="top">
+				<div id="sgf">Show sgf here</div>
 			</td>
 		</tr>
 		</table>

@@ -100,17 +100,22 @@
 
 		board = null;
 		playerId = undefined;
+        playerName = null;
 		opponentId = undefined;
+        opponentName = null;
 		justSelectColor=true;
 		lang="en";
 
 		gameState = {
 			board: null,
+			lang: null,
 			moveHistory: null,
 			current: COLOR.black,
 			last: null,
 			winner: -1,
-			black: undefined
+			black: undefined,
+			whiteName: null,
+			blackName: null
 		};
 
 		window.$ = function(id) {
@@ -253,10 +258,14 @@
       function selectColor(color) {
         if (color == COLOR.black) {
           gameState.black = playerId;
+		  gameState.blackName = playerName;
           gameState.white = opponentId;
+		  gameState.whiteName = opponentName;
         } else {
           gameState.black = opponentId;
-          gameState.white = playerId;
+          gameState.blackName = opponentName;
+		  gameState.white = playerId;
+          gameState.whiteName = playerName;
         }
    	  	justSelectColor=true;
         updateGameState();
@@ -466,12 +475,6 @@
           showElement('resign');
         }
 
-		if (gameState.last) {
-			var cursor = $("cursor");
-   			showElement(cursor)
-			setPos(cursor, coordsToPos(gameState.last));
-		}
-
         var msg = '';
         if (gameState.winner != -1) {
           msg = gameState.winner == COLOR.white ? 'White' : 'Black';
@@ -490,6 +493,12 @@
 
 		// Show sgf
 		showSGF(gameState.moveHistory);
+
+		if (gameState.last) {
+			var cursor = $("cursor");
+   			showElement(cursor)
+			setPos(cursor, coordsToPos(gameState.last));
+		}
       };
 
       function resign() {
@@ -544,8 +553,8 @@
 	}
 
 	function setGameTitle() {
-        $('blackname').innerHTML = gameState.black;
-        $('whitename').innerHTML = gameState.white;
+        $('blackname').innerHTML = gameState.blackName;
+        $('whitename').innerHTML = gameState.whiteName;
 	}
 
 	function onStateChange(state) {
@@ -556,12 +565,14 @@
 		if (!board)
 			return;
 
-		if (!playerId)
+		if (!playerId) {
 			playerId = wave.getViewer().getId();
+			playerName = wave.getViewer().getDisplayName();
+		}
 
 		var tempState = JSON.parse(state.get('gameState','{}'));
-		if (tempState&&tempState.board){
-			if (!opponentId&&tempState.white&&tempState.black){
+		if (tempState && tempState.board){
+			if (!opponentId && tempState.white && tempState.black){
 				opponentId = playerId==tempState.white?tempState.black:tempState.white;
 			}
 			gameState = tempState;
@@ -577,12 +588,15 @@
 
 		var parts = wave.getParticipants();
 		if (parts.length>1){
-			if (!playerId)
+			if (!playerId)  {
 				playerId = wave.getViewer().getId();
+				playerName = wave.getViewer().getDisplayName();
+			}
 			for(var i=0;i<parts.length;i++){
 				var id = parts[i].getId();
 				if (id!=playerId){
 					opponentId = id;
+					opponentName = parts[i].getDisplayName();
 					resetGame();
 					updateGameState();
 					return;
@@ -597,7 +611,6 @@
 	}
 
 	function init() {
-		alert(langOption);
 		for (lo in langOption) {
 		    var o=document.createElement('option');
             // Add to options first, then init the option otherwish the option can't init.
@@ -606,7 +619,6 @@
 			o.value=langOption[lo].value;
 			if (o.value == lang) o.selected = true;
 		}
-		alert("lang is ok");
 
 		if (wave && wave.isInWaveContainer()) {
 			wave.setStateCallback(onStateChange);
@@ -622,7 +634,6 @@
 				board.attachEvent('onmouseout', Board.onMouseOut);
 			}
 		}
-		alert("init is ok");
 	}
 
 	gadgets.util.registerOnLoadHandler(init);

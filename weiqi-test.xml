@@ -399,19 +399,22 @@
 	  }
 
       Board.onMouseMove = function(e) {
+	  /*
         if (!board) {
           return;
         }
         if (!isMyTurn()) {
           return false;
         }
+
         var pos = getMousePos(e);
-        coords = posToCoords(pos);
+        var coords = posToCoords(pos);
 		if (board.isValidMove(coords)) {
 			changePointer("pointer");
 		} else {
 			changePointer("default");
 		}
+		*/
       };
 
       Board.onMouseOut = function(e) {

@@ -82,8 +82,8 @@
       }
     </style>
     <script type="text/javascript" src="http://wave-api.appspot.com/public/wave.js"></script>
-    <script type="text/javascript" src="http://www.JSON.org/json2.js"></script>
-    <script id="LangJS" type="text/javascript" src="lang.js"></script>
+    <script type="text/javascript" src="http://weiqi-gadget.googlecode.com/svn/trunk/json2min.js"></script>
+    <script type="text/javascript" src="http://weiqi-gadget.googlecode.com/svn/trunk/lang.js"></script>
     <script type="text/javascript">
       HOST = 'http://weiqi-gadget.googlecode.com/svn/trunk/';
       SQUARE_SIZE = 20;
@@ -98,8 +98,6 @@
         'black': 2
       };
 
-		capturedPieces = [];
-
 		board = null;
 		playerId = undefined;
 		opponentId = undefined;
@@ -108,8 +106,9 @@
 
 		gameState = {
 			board: null,
-			moveHistory: [],
+			moveHistory: null,
 			current: COLOR.black,
+			last: null,
 			winner: -1,
 			black: undefined
 		};
@@ -146,23 +145,10 @@
         this.col = col;
       }
 
-	  function Piece(BW,index) {
-		this.BW=BW;
-		this.index=index;
-	  }
-
-      function Move(piece, pos) {
-        this.piece = piece;
-        this.pos = pos;
-      }
-
-      function recordMove(piece,pos) {
-        var move = new Move(piece, pos);
-        gameState.moveHistory.push(move);
-      }
-
-      function capturePiece(code) {
-        capturedPieces.push(code);
+      function recordMove(ch,coords) {
+		var sgf = (ch==COLOR.white?"W":"B");
+		sgf += "["+String.fromCharCode(97+coords.row)+String.fromCharCode(97+coords.col)+"];";
+        gameState.moveHistory += sgf;
       }
 
       function isMyTurn() {
@@ -322,6 +308,10 @@
 		var ch=getMyColor();
 
         this.state[coords.row][coords.col]=ch;
+
+        recordMove(ch,coords);
+
+        gameState.last=coords;
 
         this.checkCapture(ch);
 
@@ -507,8 +497,8 @@
         gameState.current = COLOR.black;
         gameState.moveHistory = [];
         gameState.winner = -1;
+        gameState.last = null;
         gameState.black = undefined;
-        capturedPieces = [];
         board = new Board();
         board.render();
       }

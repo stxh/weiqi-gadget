@@ -408,7 +408,6 @@
 	  }
 
       Board.onMouseMove = function(e) {
-	  /*
         if (!board) {
           return;
         }
@@ -423,7 +422,6 @@
 		} else {
 			changePointer("default");
 		}
-		*/
       };
 
       Board.onMouseOut = function(e) {
@@ -442,6 +440,7 @@
       };
 
       Board.prototype.endTurn = function() {
+		alert("endTurn");
         gameState.current = getOtherColor(gameState.current);
         updateGameState();
       };
@@ -549,7 +548,6 @@
 
     function onLanguageChange(selectedLang) {
 		lang= selectedLang;
-		alert(lang);
 	}
 
 	function setGameTitle() {

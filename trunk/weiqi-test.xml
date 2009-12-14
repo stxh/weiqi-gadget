@@ -407,7 +407,7 @@
         }
         var pos = getMousePos(e);
         coords = posToCoords(pos);
-		if (board.isValidMove) board.changePointer("pointer");
+		if (board.isValidMove(coords)) board.changePointer("pointer");
 		else board.changePointer("default");
       };
 

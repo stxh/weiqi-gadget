@@ -5,7 +5,7 @@
 <!-- v0.5 2009-11-27 11:22:46 -->
 <!-- http://weiqi-gadget.googlecode.com/svn/trunk/weiqi-test.xml -->
 <Module>
-  <ModulePrefs title="weiqi" width="400" height="480">
+  <ModulePrefs title="weiqi" width="400" height="500">
     <Optional feature="content-rewrite">
       <Param name="include-tags"/>
     </Optional>
@@ -399,6 +399,16 @@
 	  }
 
       Board.onMouseMove = function(e) {
+        if (!board) {
+          return;
+        }
+        if (!isMyTurn()) {
+          return false;
+        }
+        var pos = getMousePos(e);
+        coords = posToCoords(pos);
+		if (board.isValidMove) changePointer("pointer");
+		else changePointer("default");
       };
 
       Board.onMouseOut = function(e) {
@@ -449,6 +459,12 @@
         } else {
           showElement('resign');
         }
+
+		if (gameState.last) {
+			var cursor = $("cursor");
+   			showElement(cursor)
+			setPos(cursor, coordsToPos(gameState.last));
+		}
 
         var msg = '';
         if (gameState.winner != -1) {
@@ -565,14 +581,15 @@
 	}
 
 	function init() {
-		/*
 		for (lo in langOption) {
 		    var o=document.createElement('option');
-			o.text=langOption[lo].text;
+            // Add to options first, then init the option otherwish the option can't init.
+			$("targetLanguage").add(o);
+			o.innerText=langOption[lo].text;
 			o.value=langOption[lo].value;
-			$("targetLanguage").add(o,null);
+			if (o.value == lang) o.selected=true;
 		}
-		*/
+
 		if (wave && wave.isInWaveContainer()) {
 			wave.setStateCallback(onStateChange);
 			wave.setParticipantCallback(onParticipantsChange);
@@ -648,6 +665,10 @@
 			</center>
 		</div>
 	</div>
+
+	<div id="cursor" class="hide">
+	</div>
+
 
     ]]>
   </Content>

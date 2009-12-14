@@ -493,8 +493,9 @@
 		showSGF(gameState.moveHistory);
 
 		if (gameState.last) {
-   			showElement('cursor')
+			alert(gameState.last);
 			var cursor = $("cursor");
+			cursor.className = 'cursor';
 			setPos(cursor, coordsToPos(gameState.last));
 		}
       };

@@ -407,8 +407,8 @@
         }
         var pos = getMousePos(e);
         coords = posToCoords(pos);
-		if (board.isValidMove) changePointer("pointer");
-		else changePointer("default");
+		if (board.isValidMove) board.changePointer("pointer");
+		else board.changePointer("default");
       };
 
       Board.onMouseOut = function(e) {
@@ -487,9 +487,10 @@
       };
 
       function resign() {
-        if (!isMyTurn()) {
-          return;
-        }
+		var myID=wave.getViewer().getId();
+		if (myID != gameState.black && myID != gameState.white) {
+			return;
+		}
         gameState.winner = getOpponentColor();
         updateGameState();
       }
@@ -507,6 +508,10 @@
 	}
 
       function rematch() {
+		var myID=wave.getViewer().getId();
+		if (myID != gameState.black && myID != gameState.white) {
+			return;
+		}
         resetGame();
         updateGameState();
       }
@@ -592,7 +597,7 @@
 			$("targetLanguage").add(o);
 			o.innerText=langOption[lo].text;
 			o.value=langOption[lo].value;
-			if (o.value == lang) o.selected=true;
+			if (o.value == lang) o.selected = true;
 		}
 
 		if (wave && wave.isInWaveContainer()) {

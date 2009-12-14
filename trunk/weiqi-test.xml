@@ -492,13 +492,11 @@
 		// Show sgf
 		showSGF(gameState.moveHistory);
 
-		/*
 		if (gameState.last) {
+   			showElement('cursor')
 			var cursor = $("cursor");
-   			showElement(cursor)
 			setPos(cursor, coordsToPos(gameState.last));
 		}
-		*/
       };
 
       function resign() {

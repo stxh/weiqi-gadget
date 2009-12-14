@@ -82,7 +82,7 @@
       }
     </style>
     <script type="text/javascript" src="http://wave-api.appspot.com/public/wave.js"></script>
-    <script type="text/javascript" src="http://www.JSON.org/json2.js"></script>
+    <script type="text/javascript" src="http://weiqi-gadget.googlecode.com/svn/trunk/json2min.js"></script>
     <script type="text/javascript">
       HOST = 'http://weiqi-gadget.googlecode.com/svn/trunk/';
       SQUARE_SIZE = 20;

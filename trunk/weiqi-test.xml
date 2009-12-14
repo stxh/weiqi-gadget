@@ -602,6 +602,7 @@
 			o.value=langOption[lo].value;
 			if (o.value == lang) o.selected = true;
 		}
+		alert("lang is ok");
 
 		if (wave && wave.isInWaveContainer()) {
 			wave.setStateCallback(onStateChange);
@@ -617,6 +618,7 @@
 				board.attachEvent('onmouseout', Board.onMouseOut);
 			}
 		}
+		alert("init is ok");
 	}
 
 	gadgets.util.registerOnLoadHandler(init);

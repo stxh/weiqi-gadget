@@ -668,6 +668,9 @@
 	</div>
 
 	<div id="void" class="hide">
+		<div id="cursor">
+		</div>
+
 		<div id="selectColor">
 			<center>
 			<div id="selectColorText">Choose color:</div><br>
@@ -684,10 +687,6 @@
 			</center>
 		</div>
 	</div>
-
-	<div id="cursor" class="hide">
-	</div>
-
 
     ]]>
   </Content>

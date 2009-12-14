@@ -440,7 +440,6 @@
       };
 
       Board.prototype.endTurn = function() {
-		alert("endTurn");
         gameState.current = getOtherColor(gameState.current);
         updateGameState();
       };
@@ -493,11 +492,13 @@
 		// Show sgf
 		showSGF(gameState.moveHistory);
 
+		/*
 		if (gameState.last) {
 			var cursor = $("cursor");
    			showElement(cursor)
 			setPos(cursor, coordsToPos(gameState.last));
 		}
+		*/
       };
 
       function resign() {

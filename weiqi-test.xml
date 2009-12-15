@@ -444,6 +444,7 @@
 
       Board.prototype.clearBoard = function() {
         $('void').appendChild($('selectColor'));
+		$('void').appendChild($('cursor'));
         clearChildren(this.root);
       }
 
@@ -497,7 +498,7 @@
 			cursor.className = 'cursor';
 			setPos(cursor, coordsToPos(gameState.last));
             this.root.appendChild(cursor);
-			alert("add cursor "+cursor.className);
+			alert("add cursor "+gameState.last.row+","+gamestate.last.col);
 		}
 	};
 

@@ -103,7 +103,6 @@
 		opponentId = undefined;
 		justSelectColor=true;
 		lang="en";
-		forceRender = false;
 
 		gameState = {
 			board: null,
@@ -453,21 +452,22 @@
 	}
 
 	Board.prototype.render = function() {
-		if (forceRender) {
-			this.clearBoard();
-			forceRender = false;
+		this.clearBoard();
 
-			var stones=gameState.moveHistory.split(";");
-			for (var i = 0; i<stones.length-1; i++) {
-			var stone=stones[i].trim();
-			if (stone) this.addStoneImg(i,stone);
+        for (var i = 0; i < GAME_SIZE; ++i) {
+			for (var j = 0; j < GAME_SIZE; ++j) {
+				var ch = this.state[i][j];
+				if (ch == EMPTY_SPACE) {
+					continue;
+				}
+				var img = codeToImage(ch);
+				var coords = newCoords(i, j);
+				setPos(img, coordsToPos(coords));
+				this.root.appendChild(img);
+                var index=gameState.moveHistory.lastIndexOf(String.fromCharCode(97+i)+String.fromCharCode(97+j));
+				img.alt=index;
 			}
-		} else {
-			var stones=this.moveHistory.split(";");
-			alert(stones.length);
-			var stone=stones[stones.length-2].trim();
-			this.addStoneImg(stones.length-2,stone);
-		}
+        }
 
 		if (!gameState.black) {
 			if (opponentId)
@@ -546,7 +546,6 @@
         gameState.whiteName = undefined;
         board = new Board();
         board.render();
-        forceRender=true;
       }
 
     function onLanguageChange(selectedLang) {
@@ -589,7 +588,6 @@
 			gameState = tempState;
 			board.setState(gameState.board);
             setGameTitle();
-            forceRender = true;
 			board.render();
 		}
 	}

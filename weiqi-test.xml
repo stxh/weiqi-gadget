@@ -458,6 +458,7 @@
 			this.clearBoard();
             forceRender = false;
 
+			alert(gameState.moveHistory);
 			var stones=gameState.moveHistory.split(";");
 			for (var i = 0; i<stones.length; i++) {
 				var stone=stones[i].trim();

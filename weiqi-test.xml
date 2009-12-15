@@ -455,8 +455,9 @@
 				var coords = newCoords(i, j);
 				setPos(img, coordsToPos(coords));
 				this.root.appendChild(img);
-                var index=gameState.moveHistory.lastIndexOf(String.fromCharCode(97+i)+String.fromCharCode(97+j));
+                var index=(gameState.moveHistory.lastIndexOf(String.fromCharCode(97+i)+String.fromCharCode(97+j))+4)/6;
 				img.alt=index;
+				alert("("+i+","+j+") alt="+img.alt);
 			}
         }
 
@@ -673,7 +674,7 @@
 		</tr>
 		<tr>
 			<td align="left" valign="top">
-				<div id="sgf">Show sgf here</div>
+                <textarea name="sgf" id="sgf" cols="54" rows="3">Show sgf here</textarea>
 			</td>
 		</tr>
 		</table>

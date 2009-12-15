@@ -458,16 +458,15 @@
 			this.clearBoard();
             forceRender = false;
 
-			alert(gameState.moveHistory);
 			var stones=gameState.moveHistory.split(";");
 			for (var i = 0; i<stones.length; i++) {
 				var stone=stones[i].trim();
-                addStoneImg(i,stone);
+                this.addStoneImg(i,stone);
 			}
 		} else {
 			var stones=this.moveHistory.split(";");
 			var stone=stones[stones.length-1].trim();
-            addStoneImg(stones.length-1,stone);
+            this.addStoneImg(stones.length-1,stone);
 		}
 
         if (!gameState.black) {

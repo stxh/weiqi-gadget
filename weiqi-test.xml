@@ -100,9 +100,7 @@
 
 		board = null;
 		playerId = undefined;
-        playerName = null;
 		opponentId = undefined;
-        opponentName = null;
 		justSelectColor=true;
 		lang="en";
 
@@ -258,14 +256,10 @@
       function selectColor(color) {
         if (color == COLOR.black) {
           gameState.black = playerId;
-		  gameState.blackName = playerName;
           gameState.white = opponentId;
-		  gameState.whiteName = opponentName;
         } else {
           gameState.black = opponentId;
-          gameState.blackName = opponentName;
 		  gameState.white = playerId;
-          gameState.whiteName = playerName;
         }
    	  	justSelectColor=true;
         updateGameState();
@@ -433,7 +427,6 @@
       }
 
       Board.prototype.isValidMove = function(coords) {
-		//alert("row="+coords.row+" col="+coords.col);
 		if (coords.row<0 || coords.col<0 || coords.row>GAME_SIZE-1 || coords.col>GAME_SIZE-1) return false;
 		if (board.state[coords.row][coords.col] != EMPTY_SPACE) return false;
         return true;
@@ -493,7 +486,6 @@
 		showSGF(gameState.moveHistory);
 
 		if (gameState.last) {
-			alert(gameState.last);
 			var cursor = $("cursor");
 			cursor.className = 'cursor';
 			setPos(cursor, coordsToPos(gameState.last));
@@ -513,8 +505,10 @@
 		var myID=wave.getViewer().getId();
 		if (myID == gameState.black) {
 		    gameState.black=null;
+			gameState.blackName=null;
 		} else if (myID == gameState.white) {
 			gameState.white=null;
+			gameState.whiteName=null;
 		} else {
 			return;
 		}
@@ -535,7 +529,10 @@
         gameState.moveHistory = [];
         gameState.winner = -1;
         gameState.last = null;
-        gameState.black = undefined;
+        gameState.black = null;
+        gameState.white = null;
+        gameState.blackName = null;
+        gameState.whiteName = null;
         board = new Board();
         board.render();
       }
@@ -555,6 +552,17 @@
         $('whitename').innerHTML = gameState.whiteName;
 	}
 
+	function getPlayerName(pid) {
+		var parts = wave.getParticipants();
+		for(var i=0;i<parts.length;i++){
+			var id = parts[i].getId();
+			if (id==pid){
+				return parts[i].getDisplayName();
+			}
+		}
+		return " ";
+	}
+
 	function onStateChange(state) {
 		if (!state) {
 			return;
@@ -565,7 +573,6 @@
 
 		if (!playerId) {
 			playerId = wave.getViewer().getId();
-			playerName = wave.getViewer().getDisplayName();
 		}
 
 		var tempState = JSON.parse(state.get('gameState','{}'));
@@ -588,13 +595,11 @@
 		if (parts.length>1){
 			if (!playerId)  {
 				playerId = wave.getViewer().getId();
-				playerName = wave.getViewer().getDisplayName();
 			}
 			for(var i=0;i<parts.length;i++){
 				var id = parts[i].getId();
 				if (id!=playerId){
 					opponentId = id;
-					opponentName = parts[i].getDisplayName();
 					resetGame();
 					updateGameState();
 					return;
@@ -605,6 +610,8 @@
 
 	function updateGameState() {
 		gameState.board = JSON.stringify(board.state);
+		if (!gameState.blackName) gameState.blackName=getPlayerName(gameState.black);
+        if (!gameState.whiteName) gameState.whiteName=getPlayerName(gameState.white);
 		wave.getState().submitDelta({gameState:JSON.stringify(gameState)});
 	}
 

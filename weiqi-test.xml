@@ -202,8 +202,7 @@
 
       function codeToImage(code) {
         var img = document.createElement('img');
-        var src = (code == COLOR.white ? 'w' : 'b')+'.png';
-        img.src = HOST  + src;
+        img.src = HOST  + (code == COLOR.white ? 'w' : 'b')+'.png';
         img.className = 'piece';
         return img;
       }
@@ -459,14 +458,14 @@
             forceRender = false;
 
 			var stones=gameState.moveHistory.split(";");
-			for (var i = 0; i<stones.length; i++) {
+			for (var i = 0; i<stones.length-1; i++) {
 				var stone=stones[i].trim();
-                this.addStoneImg(i,stone);
+                if (stone) this.addStoneImg(i,stone);
 			}
 		} else {
 			var stones=this.moveHistory.split(";");
-			var stone=stones[stones.length-1].trim();
-            this.addStoneImg(stones.length-1,stone);
+			var stone=stones[stones.length-2].trim();
+            this.addStoneImg(stones.length-2,stone);
 		}
 
         if (!gameState.black) {

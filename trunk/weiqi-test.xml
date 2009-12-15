@@ -5,7 +5,7 @@
 <!-- v0.5 2009-11-27 11:22:46 -->
 <!-- http://weiqi-gadget.googlecode.com/svn/trunk/weiqi-test.xml -->
 <Module>
-  <ModulePrefs title="weiqi" width="400" height="500">
+  <ModulePrefs title="weiqi" width="400" height="530">
     <Optional feature="content-rewrite">
       <Param name="include-tags"/>
     </Optional>
@@ -457,7 +457,6 @@
 				this.root.appendChild(img);
                 var index=(gameState.moveHistory.lastIndexOf(String.fromCharCode(97+i)+String.fromCharCode(97+j))+4)/6;
 				img.alt=index;
-				alert("("+i+","+j+") alt="+img.alt);
 			}
         }
 
@@ -542,6 +541,7 @@
 
     function onLanguageChange(selectedLang) {
 		lang= selectedLang;
+
 	}
 
 	function setGameTitle() {

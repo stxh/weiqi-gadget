@@ -496,6 +496,7 @@
 			var cursor = $("cursor");
 			cursor.className = 'cursor';
 			setPos(cursor, coordsToPos(gameState.last));
+            this.root.appendChild(cursor);
 		}
 	};
 
@@ -687,6 +688,9 @@
 
 	<div id="void" class="hide">
 		<div id="cursor">
+		</div>
+
+		<div id="tooltip">
 		</div>
 
 		<div id="selectColor">

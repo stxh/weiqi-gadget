@@ -497,6 +497,7 @@
 			cursor.className = 'cursor';
 			setPos(cursor, coordsToPos(gameState.last));
             this.root.appendChild(cursor);
+			alert("add cursor "+cursor.className);
 		}
 	};
 

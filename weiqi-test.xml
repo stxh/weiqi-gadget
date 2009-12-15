@@ -112,8 +112,9 @@
 			last: null,
 			winner: -1,
 			black: undefined,
-			whiteName: null,
-			blackName: null
+			white: undefined,
+			whiteName: undefined,
+			blackName: undefined
 		};
 
 		window.$ = function(id) {
@@ -504,11 +505,11 @@
 	function leave() {
 		var myID=wave.getViewer().getId();
 		if (myID == gameState.black) {
-		    gameState.black=null;
-			gameState.blackName=null;
+		    gameState.black = undefined;
+			gameState.blackName = undefined;
 		} else if (myID == gameState.white) {
-			gameState.white=null;
-			gameState.whiteName=null;
+			gameState.white = undefined;
+			gameState.whiteName = undefined;
 		} else {
 			return;
 		}
@@ -526,13 +527,13 @@
 
       function resetGame() {
         gameState.current = COLOR.black;
-        gameState.moveHistory = [];
+        gameState.moveHistory = undefined;
         gameState.winner = -1;
-        gameState.last = null;
-        gameState.black = null;
-        gameState.white = null;
-        gameState.blackName = null;
-        gameState.whiteName = null;
+        gameState.last = undefined;
+        gameState.black = undefined;
+        gameState.white = undefined;
+        gameState.blackName = undefined;
+        gameState.whiteName = undefined;
         board = new Board();
         board.render();
       }
@@ -557,9 +558,11 @@
 		for(var i=0;i<parts.length;i++){
 			var id = parts[i].getId();
 			if (id==pid){
+				alert(id);
 				return parts[i].getDisplayName();
 			}
 		}
+		alert("no player");
 		return " ";
 	}
 

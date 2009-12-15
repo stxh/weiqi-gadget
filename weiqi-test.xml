@@ -68,9 +68,11 @@
         position: absolute;
       }
       .cursor {
-        border: 2px solid yellow;
-        width: 20px;
-        height: 20px;
+        border: 2px solid red;
+        left: 7px;
+        top: 7px;
+        width: 6px;
+        height: 6px;
         position: absolute;
       }
       .expand {
@@ -498,7 +500,7 @@
 			cursor.className = 'cursor';
 			setPos(cursor, coordsToPos(gameState.last));
             this.root.appendChild(cursor);
-			alert("add cursor "+gameState.last.row+","+gamestate.last.col);
+			//alert("add cursor "+gameState.last.row+","+gamestate.last.col);
 		}
 	};
 

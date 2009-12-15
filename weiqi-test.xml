@@ -69,10 +69,10 @@
       }
       .cursor {
         border: 2px solid red;
-        left: 7px;
-        top: 7px;
-        width: 6px;
-        height: 6px;
+        margin-left: 6px;
+        margin-top: 6px;
+        width: 4px;
+        height: 4px;
         position: absolute;
       }
       .expand {

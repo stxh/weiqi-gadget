@@ -562,7 +562,7 @@
 				return parts[i].getDisplayName();
 			}
 		}
-		alert("no player");
+		alert("no player="+pid);
 		return " ";
 	}
 

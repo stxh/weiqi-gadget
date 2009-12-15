@@ -80,6 +80,11 @@
       .selectable {
         cursor: pointer;
       }
+	textarea
+	{
+		width:100%;
+	}
+
     </style>
     <script type="text/javascript" src="http://wave-api.appspot.com/public/wave.js"></script>
     <script type="text/javascript" src="http://weiqi-gadget.googlecode.com/svn/trunk/json2min.js"></script>
@@ -673,8 +678,8 @@
 			</td>
 		</tr>
 		<tr>
-			<td align="left" valign="top">
-                <textarea name="sgf" id="sgf" cols="48" rows="3">Show sgf here</textarea>
+			<td align="center" valign="top">
+                <textarea name="sgf" id="sgf" rows="3">Show sgf here</textarea>
 			</td>
 		</tr>
 		</table>

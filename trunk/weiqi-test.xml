@@ -616,7 +616,7 @@
 		for (lo in langOption) {
 		    var o=document.createElement('option');
             // Add to options first, then init the option otherwish the option can't init.
-			$("targetLanguage").add(o);
+			$("targetLanguage").options.add(o);
 			o.innerText=langOption[lo].text;
 			o.value=langOption[lo].value;
 			if (o.value == lang) o.selected = true;

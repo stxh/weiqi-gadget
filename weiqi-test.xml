@@ -103,6 +103,7 @@
 		opponentId = undefined;
 		justSelectColor=true;
 		lang="en";
+		forceRender = false;
 
 		gameState = {
 			board: null,
@@ -443,21 +444,30 @@
         clearChildren(this.root);
       }
 
-      Board.prototype.render = function() {
-        this.clearBoard();
+	Board.prototype.addStoneImg = function(index,stone) {
+		var ch = (stone.charAt(0)=='B') ? COLOR.black: COLOR.white;
+		var img = codeToImage(ch);
+		var coords = newCoords(stone.charCodeAt(2)-97, stone.charCodeAt(3)-97);
+		setPos(img, coordsToPos(coords));
+		img.alt=index+" "+stone;
+		this.root.appendChild(img);
+	}
 
-        for (var i = 0; i < GAME_SIZE; ++i) {
-          for (var j = 0; j < GAME_SIZE; ++j) {
-            var ch = this.state[i][j];
-            if (ch == EMPTY_SPACE) {
-              continue;
-            }
-            var img = codeToImage(ch);
-            var coords = newCoords(i, j);
-            setPos(img, coordsToPos(coords));
-            this.root.appendChild(img);
-          }
-        }
+      Board.prototype.render = function() {
+        if (forceRender) {
+			this.clearBoard();
+            forceRender = false;
+
+			var stones=this.moveHistory.split(";");
+			for (var i = 0; i<stones.length; i++) {
+				var stone=stones[i].trim();
+                addStoneImg(i,stone);
+			}
+		} else {
+			var stones=this.moveHistory.split(";");
+			var stone=stones[stones.length-1].trim();
+            addStoneImg(stones.length-1,stone);
+		}
 
         if (!gameState.black) {
           if (opponentId)
@@ -536,12 +546,7 @@
         gameState.whiteName = undefined;
         board = new Board();
         board.render();
-      }
-
-      function startGame(myId, otherIds) {
-        playerId = myId;
-        opponentId = otherIds[0];
-        resetGame();
+        forceRender=true;
       }
 
     function onLanguageChange(selectedLang) {
@@ -558,11 +563,9 @@
 		for(var i=0;i<parts.length;i++){
 			var id = parts[i].getId();
 			if (id==pid){
-				alert(id);
 				return parts[i].getDisplayName();
 			}
 		}
-		alert("no player="+pid);
 		return " ";
 	}
 

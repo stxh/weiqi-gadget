@@ -674,7 +674,7 @@
 		</tr>
 		<tr>
 			<td align="left" valign="top">
-                <textarea name="sgf" id="sgf" cols="54" rows="3">Show sgf here</textarea>
+                <textarea name="sgf" id="sgf" cols="48" rows="3">Show sgf here</textarea>
 			</td>
 		</tr>
 		</table>

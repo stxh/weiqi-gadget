@@ -589,6 +589,7 @@
 			gameState = tempState;
 			board.setState(gameState.board);
             setGameTitle();
+            forceRender = true;
 			board.render();
 		}
 	}

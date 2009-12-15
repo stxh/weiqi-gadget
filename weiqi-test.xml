@@ -101,7 +101,7 @@
 		board = null;
 		playerId = undefined;
 		opponentId = undefined;
-		justSelectColor=true;
+		justSelectColor=false;
 		lang="en";
 
 		gameState = {
@@ -297,7 +297,7 @@
         }
 		if (justSelectColor) {
         	justSelectColor=false;
-          return;
+          	return;
         }
         var pos = getMousePos(e);
         coords = posToCoords(pos);
@@ -441,15 +441,6 @@
         $('void').appendChild($('selectColor'));
         clearChildren(this.root);
       }
-
-	Board.prototype.addStoneImg = function(index,stone) {
-		var ch = (stone.charAt(0)=='B') ? COLOR.black: COLOR.white;
-		var img = codeToImage(ch);
-		var coords = newCoords(stone.charCodeAt(2)-97, stone.charCodeAt(3)-97);
-		setPos(img, coordsToPos(coords));
-		img.alt=index+" "+stone;
-		this.root.appendChild(img);
-	}
 
 	Board.prototype.render = function() {
 		this.clearBoard();

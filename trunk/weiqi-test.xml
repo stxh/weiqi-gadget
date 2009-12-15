@@ -458,7 +458,7 @@
 			this.clearBoard();
             forceRender = false;
 
-			var stones=this.moveHistory.split(";");
+			var stones=gameState.moveHistory.split(";");
 			for (var i = 0; i<stones.length; i++) {
 				var stone=stones[i].trim();
                 addStoneImg(i,stone);

@@ -452,45 +452,46 @@
 		this.root.appendChild(img);
 	}
 
-      Board.prototype.render = function() {
-        if (forceRender) {
+	Board.prototype.render = function() {
+		if (forceRender) {
 			this.clearBoard();
-            forceRender = false;
+			forceRender = false;
 
 			var stones=gameState.moveHistory.split(";");
 			for (var i = 0; i<stones.length-1; i++) {
-				var stone=stones[i].trim();
-                if (stone) this.addStoneImg(i,stone);
+			var stone=stones[i].trim();
+			if (stone) this.addStoneImg(i,stone);
 			}
 		} else {
 			var stones=this.moveHistory.split(";");
+			alert(stones.length);
 			var stone=stones[stones.length-2].trim();
-            this.addStoneImg(stones.length-2,stone);
+			this.addStoneImg(stones.length-2,stone);
 		}
 
-        if (!gameState.black) {
-          if (opponentId)
-            this.root.appendChild($('selectColor'));
-          hideElement('resign');
-        } else {
-          showElement('resign');
-        }
+		if (!gameState.black) {
+			if (opponentId)
+				this.root.appendChild($('selectColor'));
+			hideElement('resign');
+		} else {
+			showElement('resign');
+		}
 
-        var msg = '';
-        if (gameState.winner != -1) {
-          msg = gameState.winner == COLOR.white ? 'White' : 'Black';
-          msg += ' wins!';
-          hideElement('resign');
-          showElement('rematch');
-        } else {
-          if (gameState.current == COLOR.white) {
-            msg = 'White to Move';
-          } else {
-            msg = 'Black to Move';
-          }
-          hideElement('rematch');
-        }
-        setInfo(msg);
+		var msg = '';
+		if (gameState.winner != -1) {
+			msg = gameState.winner == COLOR.white ? 'White' : 'Black';
+			msg += ' wins!';
+			hideElement('resign');
+			showElement('rematch');
+		} else {
+			if (gameState.current == COLOR.white) {
+				msg = 'White to Move';
+			} else {
+				msg = 'Black to Move';
+			}
+			hideElement('rematch');
+		}
+		setInfo(msg);
 
 		// Show sgf
 		showSGF(gameState.moveHistory);
@@ -500,7 +501,7 @@
 			cursor.className = 'cursor';
 			setPos(cursor, coordsToPos(gameState.last));
 		}
-      };
+	};
 
       function resign() {
 		var myID=wave.getViewer().getId();

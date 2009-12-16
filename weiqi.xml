@@ -2,10 +2,11 @@
 <!-- All Rights Reserved -->
 <!-- Adapted to "Google Wave Preview" by StXh -->
 <!-- Modify from Google Chess sample -->
+<!-- v0.6 2009-12-16 17:39:53 -->
 <!-- v0.5 2009-11-27 11:22:46 -->
-<!-- http://weiqi-gadget.googlecode.com/svn/trunk/weiqi.xml -->
+<!-- http://weiqi-gadget.googlecode.com/svn/trunk/weiqi-test.xml -->
 <Module>
-  <ModulePrefs title="weiqi" width="400" height="440">
+  <ModulePrefs title="weiqi" width="400" height="530">
     <Optional feature="content-rewrite">
       <Param name="include-tags"/>
     </Optional>
@@ -68,9 +69,11 @@
         position: absolute;
       }
       .cursor {
-        border: 2px solid yellow;
-        width: 20px;
-        height: 20px;
+        border: 2px solid red;
+        margin-left: 6px;
+        margin-top: 6px;
+        width: 4px;
+        height: 4px;
         position: absolute;
       }
       .expand {
@@ -80,9 +83,15 @@
       .selectable {
         cursor: pointer;
       }
+	textarea
+	{
+		width:100%;
+	}
+
     </style>
     <script type="text/javascript" src="http://wave-api.appspot.com/public/wave.js"></script>
     <script type="text/javascript" src="http://weiqi-gadget.googlecode.com/svn/trunk/json2min.js"></script>
+    <script type="text/javascript" src="http://weiqi-gadget.googlecode.com/svn/trunk/lang.js"></script>
     <script type="text/javascript">
       HOST = 'http://weiqi-gadget.googlecode.com/svn/trunk/';
       SQUARE_SIZE = 20;
@@ -97,24 +106,37 @@
         'black': 2
       };
 
-      capturedPieces = [];
+		board = null;
+		playerId = undefined;
+		opponentId = undefined;
+		justSelectColor=false;
+		lang="en";
 
-      board = null;
-      playerId = undefined;
-      opponentId = undefined;
-	  justSelectColor=true;
+		gameState = {
+			board: null,
+			lang: null,
+			moveHistory: null,
+			current: COLOR.black,
+			last: null,
+			winner: -1,
+			black: undefined,
+			white: undefined,
+			whiteName: undefined,
+			blackName: undefined
+		};
 
-      gameState = {
-        board: null,
-        moveHistory: [],
-        current: COLOR.black,
-        winner: -1,
-        black: undefined
-      };
+		window.$ = function(id) {
+			return document.getElementById(id);
+		};
 
-      window.$ = function(id) {
-        return document.getElementById(id);
-      };
+		function changeLang(lang)
+		{
+		   var e = $("LangJS");
+		   var h=document.getElementsByTagName("head");
+		   h[0].removeChild(e);
+		   e.src = "lang."+lang+".js";
+		   h[0].appendChild(e);
+		}
 
       function showElement(name) {
         $(name).className = '';
@@ -135,23 +157,10 @@
         this.col = col;
       }
 
-	  function Piece(BW,index) {
-		this.BW=BW;
-		this.index=index;
-	  }
-
-      function Move(piece, pos) {
-        this.piece = piece;
-        this.pos = pos;
-      }
-
-      function recordMove(piece,pos) {
-        var move = new Move(piece, pos);
-        gameState.moveHistory.push(move);
-      }
-
-      function capturePiece(code) {
-        capturedPieces.push(code);
+      function recordMove(ch,coords) {
+		var sgf = (ch==COLOR.white?"W":"B");
+		sgf += "["+String.fromCharCode(97+coords.row)+String.fromCharCode(97+coords.col)+"];";
+        gameState.moveHistory += sgf;
       }
 
       function isMyTurn() {
@@ -200,15 +209,9 @@
 
       function codeToImage(code) {
         var img = document.createElement('img');
-        var color = getColor(code);
-        var src = (color == COLOR.white ? 'w' : 'b')+'.png';
-        img.src = HOST  + src;
+        img.src = HOST  + (code == COLOR.white ? 'w' : 'b')+'.png';
         img.className = 'piece';
         return img;
-      }
-
-      function getColor(ch) {
-        return ch;
       }
 
       function getOtherColor(color) {
@@ -254,15 +257,19 @@
         $('info').innerHTML = msg;
       }
 
+      function showSGF(msg) {
+        $('sgf').innerHTML = msg;
+      }
+
       function selectColor(color) {
         if (color == COLOR.black) {
           gameState.black = playerId;
           gameState.white = opponentId;
         } else {
           gameState.black = opponentId;
-          gameState.white = playerId;
+		  gameState.white = playerId;
         }
-   	  justSelectColor=true;
+   	  	justSelectColor=true;
         updateGameState();
       }
 
@@ -298,7 +305,7 @@
         }
 		if (justSelectColor) {
         	justSelectColor=false;
-          return;
+          	return;
         }
         var pos = getMousePos(e);
         coords = posToCoords(pos);
@@ -311,6 +318,10 @@
 		var ch=getMyColor();
 
         this.state[coords.row][coords.col]=ch;
+
+        recordMove(ch,coords);
+
+        gameState.last = coords;
 
         this.checkCapture(ch);
 
@@ -399,6 +410,20 @@
 	  }
 
       Board.onMouseMove = function(e) {
+        if (!board) {
+          return;
+        }
+        if (!isMyTurn()) {
+          return false;
+        }
+
+        var pos = getMousePos(e);
+        var coords = posToCoords(pos);
+		if (board.isValidMove(coords)) {
+			changePointer("pointer");
+		} else {
+			changePointer("default");
+		}
       };
 
       Board.onMouseOut = function(e) {
@@ -410,7 +435,6 @@
       }
 
       Board.prototype.isValidMove = function(coords) {
-		//alert("row="+coords.row+" col="+coords.col);
 		if (coords.row<0 || coords.col<0 || coords.row>GAME_SIZE-1 || coords.col>GAME_SIZE-1) return false;
 		if (board.state[coords.row][coords.col] != EMPTY_SPACE) return false;
         return true;
@@ -423,81 +447,129 @@
 
       Board.prototype.clearBoard = function() {
         $('void').appendChild($('selectColor'));
+		$('void').appendChild($('cursor'));
         clearChildren(this.root);
       }
 
-      Board.prototype.render = function() {
-        this.clearBoard();
+	Board.prototype.render = function() {
+		this.clearBoard();
 
         for (var i = 0; i < GAME_SIZE; ++i) {
-          for (var j = 0; j < GAME_SIZE; ++j) {
-            var ch = this.state[i][j];
-            if (ch == EMPTY_SPACE) {
-              continue;
-            }
-            var img = codeToImage(ch);
-            var coords = newCoords(i, j);
-            setPos(img, coordsToPos(coords));
-            this.root.appendChild(img);
-          }
+			for (var j = 0; j < GAME_SIZE; ++j) {
+				var ch = this.state[i][j];
+				if (ch == EMPTY_SPACE) {
+					continue;
+				}
+				var img = codeToImage(ch);
+				var coords = newCoords(i, j);
+				setPos(img, coordsToPos(coords));
+				this.root.appendChild(img);
+                var index=(gameState.moveHistory.lastIndexOf(String.fromCharCode(97+i)+String.fromCharCode(97+j))+4)/6;
+				img.alt=index;
+			}
         }
 
-        if (!gameState.black) {
-          if (opponentId)
-            this.root.appendChild($('selectColor'));
-          hideElement('resign');
-        } else {
-          showElement('resign');
-        }
+		if (!gameState.black) {
+			if (opponentId)
+				this.root.appendChild($('selectColor'));
+			hideElement('resign');
+		} else {
+			showElement('resign');
+		}
 
-        var msg = '';
-        if (gameState.winner != -1) {
-          msg = gameState.winner == COLOR.white ? 'White' : 'Black';
-          msg += ' wins!';
-          hideElement('resign');
-          showElement('rematch');
-        } else {
-          if (gameState.current == COLOR.white) {
-            msg = 'White to Move';
-          } else {
-            msg = 'Black to Move';
-          }
-          hideElement('rematch');
-        }
-        setInfo(msg);
-      };
+		var msg = '';
+		if (gameState.winner != -1) {
+			msg = gameState.winner == COLOR.white ? 'White' : 'Black';
+			msg += ' wins!';
+			hideElement('resign');
+			showElement('rematch');
+		} else {
+			if (gameState.current == COLOR.white) {
+				msg = 'White to Move';
+			} else {
+				msg = 'Black to Move';
+			}
+			hideElement('rematch');
+		}
+		setInfo(msg);
+
+		// Show sgf
+		showSGF(gameState.moveHistory);
+
+		if (gameState.last) {
+			var cursor = $("cursor");
+			cursor.className = 'cursor';
+			setPos(cursor, coordsToPos(gameState.last));
+            this.root.appendChild(cursor);
+			//alert("add cursor "+gameState.last.row+","+gamestate.last.col);
+		}
+	};
 
       function resign() {
+		var myID=wave.getViewer().getId();
+		if (myID != gameState.black && myID != gameState.white) {
+			return;
+		}
         gameState.winner = getOpponentColor();
         updateGameState();
       }
 
-      function leave() {
-        if (playerId == gameState.black) {gameState.black=null};
-        if (playerId == gameState.white) {gameState.white=null};
-        updateGameState();
-      }
+	function leave() {
+		var myID=wave.getViewer().getId();
+		if (myID == gameState.black) {
+		    gameState.black = undefined;
+			gameState.blackName = undefined;
+		} else if (myID == gameState.white) {
+			gameState.white = undefined;
+			gameState.whiteName = undefined;
+		} else {
+			return;
+		}
+		updateGameState();
+	}
 
       function rematch() {
+		var myID=wave.getViewer().getId();
+		if (myID != gameState.black && myID != gameState.white) {
+			return;
+		}
         resetGame();
         updateGameState();
       }
 
       function resetGame() {
         gameState.current = COLOR.black;
-        gameState.moveHistory = [];
+        gameState.moveHistory = undefined;
         gameState.winner = -1;
+        gameState.last = undefined;
         gameState.black = undefined;
-        capturedPieces = [];
+        gameState.white = undefined;
+        gameState.blackName = undefined;
+        gameState.whiteName = undefined;
         board = new Board();
         board.render();
       }
 
-      function startGame(myId, otherIds) {
-        playerId = myId;
-        opponentId = otherIds[0];
-        resetGame();
-      }
+    function onLanguageChange(selectedLang) {
+		lang= selectedLang;
+
+	}
+
+	function setGameTitle() {
+        $('blackname').innerHTML = gameState.blackName;
+        $('whitename').innerHTML = gameState.whiteName;
+	}
+
+	function getPlayerName(pid) {
+		var parts = wave.getParticipants();
+		for(var i=0;i<parts.length;i++){
+			var id = parts[i].getId();
+			if (id==pid){
+				return parts[i].getDisplayName();
+			}
+		}
+		return " ";
+	}
 
 	function onStateChange(state) {
 		if (!state) {
@@ -507,16 +579,18 @@
 		if (!board)
 			return;
 
-		if (!playerId)
+		if (!playerId) {
 			playerId = wave.getViewer().getId();
+		}
 
 		var tempState = JSON.parse(state.get('gameState','{}'));
-		if (tempState&&tempState.board){
-			if (!opponentId&&tempState.white&&tempState.black){
+		if (tempState && tempState.board){
+			if (!opponentId && tempState.white && tempState.black){
 				opponentId = playerId==tempState.white?tempState.black:tempState.white;
 			}
 			gameState = tempState;
 			board.setState(gameState.board);
+            setGameTitle();
 			board.render();
 		}
 	}
@@ -527,8 +601,9 @@
 
 		var parts = wave.getParticipants();
 		if (parts.length>1){
-			if (!playerId)
+			if (!playerId)  {
 				playerId = wave.getViewer().getId();
+			}
 			for(var i=0;i<parts.length;i++){
 				var id = parts[i].getId();
 				if (id!=playerId){
@@ -541,78 +616,105 @@
 		}
 	}
 
-      function updateGameState() {
-        gameState.board = JSON.stringify(board.state);
-        wave.getState().submitDelta({gameState:JSON.stringify(gameState)});
-      }
+	function updateGameState() {
+		gameState.board = JSON.stringify(board.state);
+		if (!gameState.blackName) gameState.blackName=getPlayerName(gameState.black);
+        if (!gameState.whiteName) gameState.whiteName=getPlayerName(gameState.white);
+		wave.getState().submitDelta({gameState:JSON.stringify(gameState)});
+	}
 
-      function init() {
-          if (wave && wave.isInWaveContainer()) {
-              wave.setStateCallback(onStateChange);
-              wave.setParticipantCallback(onParticipantsChange);
-              var board = $('board');
-              if (board.addEventListener) {
-                  board.addEventListener('click', Board.onClick, false);
-                  board.addEventListener('mousemove', Board.onMouseMove,false);
-                  board.addEventListener('mouseout', Board.onMouseOut,false);
-              } else {
-                  board.attachEvent('onclick', Board.onClick);
-                  board.attachEvent('onmousemove', Board.onMouseMove);
-                  board.attachEvent('onmouseout', Board.onMouseOut);
-              }
-          }
-      }
+	function init() {
+		for (lo in langOption) {
+		    var o=document.createElement('option');
+            // Add to options first, then init the option otherwish the option can't init.
+			$("targetLanguage").options.add(o);
+			o.innerText=langOption[lo].text;
+			o.value=langOption[lo].value;
+			if (o.value == lang) o.selected = true;
+		}
+
+		if (wave && wave.isInWaveContainer()) {
+			wave.setStateCallback(onStateChange);
+			wave.setParticipantCallback(onParticipantsChange);
+			var board = $('board');
+			if (board.addEventListener) {
+				board.addEventListener('click', Board.onClick, false);
+				board.addEventListener('mousemove', Board.onMouseMove,false);
+				board.addEventListener('mouseout', Board.onMouseOut,false);
+			} else {
+				board.attachEvent('onclick', Board.onClick);
+				board.attachEvent('onmousemove', Board.onMouseMove);
+				board.attachEvent('onmouseout', Board.onMouseOut);
+			}
+		}
+	}
 
 	gadgets.util.registerOnLoadHandler(init);
     </script>
+	<div id="canvas">
+		<table class="expand" border="0" cellpadding="0" cellspacing="0">
+		<tr>
+			<td align="center" valign="top">
+				<img src="http://weiqi-gadget.googlecode.com/svn/trunk/b.png" /><span id="blackname">NA</span> vs <img src="http://weiqi-gadget.googlecode.com/svn/trunk/w.png" /><span id="whitename">NA</span>
+			</td>
+		</tr>
+		<tr>
+			<td align="center" valign="center">
+				<table border="0">
+				<tr>
+					<td align="right" valign="top">
+						<a id="resign" class="hide" href="#" onclick="resign(); return false;">Resign</a>
+						<a id="rematch" class="hide" href="#" onclick="rematch(); return false;">Rematch</a>
+						<a id="leave" href="#" onclick="leave(); return false;">Leave</a>
+						<select id="targetLanguage" name="targetLanguage" onchange="onLanguageChange(this.value)">
+						</select>
+					</td>
+				</tr>
+				<tr>
+				    <td>
+						<div id="board"> </div>
+					</td>
+				</tr>
+				</table>
+			</td>
+		</tr>
+		<tr>
+			<td align="center" valign="top">
+				<div id="info">White's Move</div>
+			</td>
+		</tr>
+		<tr>
+			<td align="center" valign="top">
+                <textarea name="sgf" id="sgf" rows="3">Show sgf here</textarea>
+			</td>
+		</tr>
+		</table>
+	</div>
 
-    <div id="canvas">
-      <table class="expand" border="0" cellpadding="0" cellspacing="0">
-        <tr>
-          <td align="center" valign="center">
+	<div id="void" class="hide">
+		<div id="cursor">
+		</div>
 
-            <table border="0">
-              <tr>
-                <td align="right" valign="top">
-                  <a id="resign" class="hide" href="#" onclick="resign(); return false;">Resign</a>
-                  <a id="rematch" class="hide" href="#" onclick="rematch(); return false;">Rematch</a>
-                  <a id="leave" href="#" onclick="leave(); return false;">leave</a>
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <div id="board">
-                </td>
-              </tr>
-            </table>
-          </td>
-        </tr>
-        <tr>
-          <tr>
-            <td align="center" valign="top">
-              <div id="info">White's Move</div>
-            </td>
-        </tr>
-      </table>
-      </div>
-    </div>
-    <div id="void" class="hide">
-      <div id="selectColor">
-        <center>
-          Choose color:</br>
-          <table>
-            <tr>
-              <td width="20">
-                <img class="selectable piece" onclick="selectColor(COLOR.black);return false;" src="http://weiqi-gadget.googlecode.com/svn/trunk/b.png"/>
-              </td>
-              <td width="20">
-                <img class="selectable piece" onclick="selectColor(COLOR.white);return false;" src="http://weiqi-gadget.googlecode.com/svn/trunk/w.png"/>
-              </td>
-            </tr>
-          </table>
-        </center>
-      </div>
-    </div>
+		<div id="tooltip">
+		</div>
+
+		<div id="selectColor">
+			<center>
+			<div id="selectColorText">Choose color:</div><br>
+			<table>
+			<tr>
+				<td width="20">
+					<img class="selectable piece" onclick="selectColor(COLOR.black);return false;" src="http://weiqi-gadget.googlecode.com/svn/trunk/b.png"/>
+				</td>
+				<td width="20">
+					<img class="selectable piece" onclick="selectColor(COLOR.white);return false;" src="http://weiqi-gadget.googlecode.com/svn/trunk/w.png"/>
+				</td>
+			</tr>
+			</table>
+			</center>
+		</div>
+	</div>
+
     ]]>
   </Content>
 </Module>

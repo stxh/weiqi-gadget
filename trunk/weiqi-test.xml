@@ -465,7 +465,7 @@
 				setPos(img, coordsToPos(coords));
 				this.root.appendChild(img);
                 var index=(gameState.moveHistory.lastIndexOf(String.fromCharCode(97+i)+String.fromCharCode(97+j))+4)/6;
-				img.alt=index;
+				img.title=index;
 			}
         }
 

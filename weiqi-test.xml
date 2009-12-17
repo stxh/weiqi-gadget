@@ -115,7 +115,7 @@
 		gameState = {
 			board: null,
 			lang: null,
-			moveHistory: null,
+			moveHistory: "",
 			current: COLOR.black,
 			last: null,
 			winner: -1,
@@ -539,13 +539,13 @@
 
       function resetGame() {
         gameState.current = COLOR.black;
-        gameState.moveHistory = undefined;
+        gameState.moveHistory = "";
         gameState.winner = -1;
-        gameState.last = undefined;
-        gameState.black = undefined;
-        gameState.white = undefined;
-        gameState.blackName = undefined;
-        gameState.whiteName = undefined;
+        gameState.last = "";
+        gameState.black = "";
+        gameState.white = "";
+        gameState.blackName = "";
+        gameState.whiteName = "";
         board = new Board();
         board.render();
       }
@@ -700,7 +700,7 @@
 
 		<div id="selectColor">
 			<center>
-			<div id="selectColorText">Choose color:</div><br>
+			<div id="selectColorText">Choose color:</div>
 			<table>
 			<tr>
 				<td width="20">

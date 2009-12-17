@@ -85,7 +85,7 @@
       }
 	textarea
 	{
-		width:100%;
+		width:98%;
 	}
 
     </style>
@@ -618,8 +618,8 @@
 
 	function updateGameState() {
 		gameState.board = JSON.stringify(board.state);
-		if (!gameState.blackName) gameState.blackName=getPlayerName(gameState.black);
-        if (!gameState.whiteName) gameState.whiteName=getPlayerName(gameState.white);
+		gameState.blackName=getPlayerName(gameState.black);
+        gameState.whiteName=getPlayerName(gameState.white);
 		wave.getState().submitDelta({gameState:JSON.stringify(gameState)});
 	}
 

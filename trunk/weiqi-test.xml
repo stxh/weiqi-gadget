@@ -324,7 +324,7 @@
       Board.prototype.putAStone = function(coords) {
 		var ch=getMyColor();
 
-		pubAStoneOnBoard(coords,ch);
+		this.pubAStoneOnBoard(coords,ch);
 
 		this.render();
 		this.endTurn();
@@ -715,9 +715,6 @@
 
 	<div id="void" class="hide">
 		<div id="cursor">
-		</div>
-
-		<div id="tooltip">
 		</div>
 
 		<div id="selectColor">

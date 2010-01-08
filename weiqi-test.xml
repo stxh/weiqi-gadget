@@ -539,6 +539,10 @@
     }
 
 	function replay() {
+		var myID=wave.getViewer().getId();
+		if (myID != gameState.black && myID != gameState.white) {
+			return;
+		}
 		for (var i=0;i <GAME_SIZE; i++) {
 			for (var j=0; j< GAME_SIZE; j++) {
 				board.state[i][j]=EMPTY_SPACE;
@@ -549,7 +553,8 @@
         gameState.moveHistory="";
 		var index=sgf.indexOf("B");
 		sgf=sgf.substring(index);
-		alert(sgf);
+		//alert(sgf);
+		var last;
 		for (var i=0;i<sgf.length/6;i++) {
 			var stone=sgf.slice(i*6,i*6+6);     //B[bc];
 			//alert(stone);
@@ -558,8 +563,11 @@
             var coords = newCoords(stone.charCodeAt(2)-97,stone.charCodeAt(3)-97);
 			//alert("put at x:"+coords.row+" y:"+coords.col+" color:"+ch);
             board.putAStoneOnBoard(coords,ch);
+			last=ch;
 		}
 		board.render();
+        gameState.current = getOtherColor(last);
+        updateGameState();
 	}
 
     function resetGame() {

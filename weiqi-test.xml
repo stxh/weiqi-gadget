@@ -546,7 +546,7 @@
 		}
 
 		var sgf=$('sgf').innerHTML;
-		alter(sgf);
+		alert(sgf);
         gameState.moveHistory="";
 		var index=sgf.indexOf("B");
 		sgf=sgf.substring(index);

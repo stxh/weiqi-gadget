@@ -342,7 +342,7 @@
 			for (var j=0; j< GAME_SIZE; j++) {
 				if (this.state[i][j]==ch) {
 					var ofGroup=false;
-					var inGroup=null;
+					var inGroup=[];
 					for (tG in groupList) {
 						var tGroup=groupList[tG];
 						for (tC in tGroup) {
@@ -351,7 +351,7 @@
 								|| j+1<GAME_SIZE && tGroup[tC] == i*GAME_SIZE+j+1
 								|| j-1>=0 && tGroup[tC] == i*GAME_SIZE+j-1) {
 								ofGroup=true;
-								if (!inGroup) {
+								if (inGroup.length==0) {
 									inGroup=tGroup;
 									inGroup.push(i*GAME_SIZE+j);
 								} else {

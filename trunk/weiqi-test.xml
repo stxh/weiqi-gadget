@@ -357,10 +357,8 @@
 									inGroup=tGroup;
 									inGroup.push(i*GAME_SIZE+j);
 								} else {
-								if(i==3 && j==3 ||i==3 && j==4  ) alert("before in="+inGroup.join(",")+" t="+ tGroup.join(","));
-									inGroup.concat(tGroup);
+									inGroup = inGroup.concat(tGroup);
 									tGroup=[];
-								if(i==3 && j==3 ||i==3 && j==4  ) alert("after in="+inGroup.join(",")+" t="+ tGroup.join(","));
 								}
 								break;
 							}

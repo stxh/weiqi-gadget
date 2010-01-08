@@ -549,6 +549,7 @@
         gameState.moveHistory="";
 		var index=sgf.indexOf("B");
 		sgf=sgf.substring(index);
+		alert(sgf);
 		for (var i=0;i<sgf.length/6;i++) {
 			var stone=sgf.slice(i*6,i*6+6);     //B[bc];
 			//alert(stone);

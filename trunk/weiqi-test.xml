@@ -342,7 +342,7 @@
 			for (var j=0; j< GAME_SIZE; j++) {
 				if (this.state[i][j]==ch) {
 					var ofGroup=false;
-					var inGroup=[];
+					var inGroup=null;
 
 					for (tG in groupList) {
 						var tGroup=groupList[tG];
@@ -353,14 +353,12 @@
 								|| j+1<GAME_SIZE && tGroup[tC] == i*GAME_SIZE+j+1
 								|| j-1>=0 && tGroup[tC] == i*GAME_SIZE+j-1) {
 								ofGroup=true;
-								if (inGroup.length==0) {
-									inGroup=tGroup;
-									inGroup.push(i*GAME_SIZE+j);
+								if (inGroup==null) {
+									inGroup=tG;
+									groupList[inGroup].push(i*GAME_SIZE+j);
 								} else {
-								if(i==3 && j==3 ||i==3 && j==4  ) alert("tG="+tG+" tGroup="+tGroup.join(","));
-									inGroup=inGroup.concat(tGroup);
-									tGroup=[];
-								if(i==3 && j==3 ||i==3 && j==4  ) alert("after in="+inGroup.join(",")+" t="+ tGroup.join(","));
+									groupList[inGroup]=groupList[inGroup].concat(tGroup);
+									groupList[tG]=[];
 								}
 								break;
 							}

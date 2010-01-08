@@ -384,7 +384,6 @@
 				}
 			}
 			if (!bAir) {
-				alert("tG="+tG+" tGroup="+tGroup.join(","));
 				for (tC in tGroup) {
 					this.state[Math.floor(tGroup[tC]/GAME_SIZE)][tGroup[tC] % GAME_SIZE]=EMPTY_SPACE;
 				}

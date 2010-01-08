@@ -6,7 +6,7 @@
 <!-- v0.5 2009-11-27 11:22:46 -->
 <!-- http://weiqi-gadget.googlecode.com/svn/trunk/weiqi-test.xml -->
 <Module>
-  <ModulePrefs title="weiqi" width="400" height="530">
+  <ModulePrefs title="weiqi" width="400" height="550">
     <Optional feature="content-rewrite">
       <Param name="include-tags"/>
     </Optional>
@@ -159,7 +159,7 @@
 
       function recordMove(ch,coords) {
 		var sgf = (ch==COLOR.white?"W":"B");
-		sgf += "["+String.fromCharCode(97+coords.row)+String.fromCharCode(97+coords.col)+"];";
+		sgf += "["+String.fromCharCode(97+coords.row,97+coords.col)+"];";
         gameState.moveHistory += sgf;
       }
 
@@ -317,22 +317,23 @@
       Board.prototype.putAStone = function(coords) {
 		var ch=getMyColor();
 
-        this.state[coords.row][coords.col]=ch;
-
-        recordMove(ch,coords);
-
-        gameState.last = coords;
-
-        this.checkCapture(ch);
+		this.putAStoneOnBoard(coords,ch);
 
 		this.render();
 		this.endTurn();
       };
 
+	  Board.prototype.putAStoneOnBoard = function(coords,ch) {
+        this.state[coords.row][coords.col]=ch;
+        recordMove(ch,coords);
+        gameState.last = coords;
+        this.checkCapture(ch);
+	  };
+
       Board.prototype.checkCapture = function(ch) {
 		this.checkCaptureColor(getOtherColor(ch));
 		this.checkCaptureColor(ch);
-	  }
+	  };
 
       Board.prototype.checkCaptureColor = function(ch) {
 		var groupList=[];
@@ -341,22 +342,25 @@
 			for (var j=0; j< GAME_SIZE; j++) {
 				if (this.state[i][j]==ch) {
 					var ofGroup=false;
+					var inGroup=null;
+
 					for (tG in groupList) {
-						var inGroup=null;
 						var tGroup=groupList[tG];
+						if (tGroup.length==0) continue;
 						for (tC in tGroup) {
-							if (tGroup[tC] == (i-1)*GAME_SIZE+j
-								|| tGroup[tC] == (i+1)*GAME_SIZE+j
-								|| tGroup[tC] == i*GAME_SIZE+j+1
-								|| tGroup[tC] == i*GAME_SIZE+j-1) {
+							if ( i-1>=0 && tGroup[tC] == (i-1)*GAME_SIZE+j
+								|| i+1<GAME_SIZE && tGroup[tC] == (i+1)*GAME_SIZE+j
+								|| j+1<GAME_SIZE && tGroup[tC] == i*GAME_SIZE+j+1
+								|| j-1>=0 && tGroup[tC] == i*GAME_SIZE+j-1) {
 								ofGroup=true;
-								if (!inGroup) {
-									inGroup=groupList[tG];
-									inGroup.push(i*GAME_SIZE+j);
+								if (inGroup==null) {
+									inGroup=tG;
+									groupList[inGroup].push(i*GAME_SIZE+j);
 								} else {
-									inGroup.push(groupList[tG]);
-									groupList[tG]=null;
+									groupList[inGroup]=groupList[inGroup].concat(tGroup);
+									groupList[tG]=[];
 								}
+								break;
 							}
 						}
 					}
@@ -372,6 +376,7 @@
 		for (tG in groupList) {
 			var bAir=false;
 			var tGroup=groupList[tG];
+			if (tGroup.length==0) continue;
 			for (tC in tGroup) {
 				if (this.haveAir(tGroup[tC])) {
 					bAir=true;
@@ -379,17 +384,16 @@
 				}
 			}
 			if (!bAir) {
-				for (tC in groupList[tG]) {
-				var tGroup=groupList[tG];
+				for (tC in tGroup) {
 					this.state[Math.floor(tGroup[tC]/GAME_SIZE)][tGroup[tC] % GAME_SIZE]=EMPTY_SPACE;
 				}
 			}
 		}
       };
 
-      Board.prototype.haveAir = function(tC) {
-		var row=Math.floor(tC/GAME_SIZE);
-		var col=tC % GAME_SIZE;
+      Board.prototype.haveAir = function(xy) {
+		var row=Math.floor(xy/GAME_SIZE);
+		var col=xy % GAME_SIZE;
 		//up
 		if (row-1 >= 0) {
 			if (this.state[row-1][col] == EMPTY_SPACE) return true;
@@ -407,7 +411,7 @@
 			if (this.state[row][col+1] == EMPTY_SPACE) return true;
 		}
 		return false;
-	  }
+	  };
 
       Board.onMouseMove = function(e) {
         if (!board) {
@@ -464,7 +468,7 @@
 				var coords = newCoords(i, j);
 				setPos(img, coordsToPos(coords));
 				this.root.appendChild(img);
-                var index=(gameState.moveHistory.lastIndexOf(String.fromCharCode(97+i)+String.fromCharCode(97+j))+4)/6;
+                var index=(gameState.moveHistory.lastIndexOf(String.fromCharCode(97+i,97+j))+4)/6;
 				img.title=index;
 			}
         }
@@ -534,6 +538,38 @@
 			return;
 		}
         resetGame();
+        updateGameState();
+    }
+
+	function replay() {
+		var myID=wave.getViewer().getId();
+		if (myID != gameState.black && myID != gameState.white) {
+			return;
+		}
+		for (var i=0;i <GAME_SIZE; i++) {
+			for (var j=0; j< GAME_SIZE; j++) {
+				board.state[i][j]=EMPTY_SPACE;
+			}
+		}
+
+		var sgf=$('sgf').value;
+        gameState.moveHistory="";
+		var index=sgf.indexOf("B");
+		sgf=sgf.substring(index);
+		//alert(sgf);
+		var last;
+		for (var i=0;i<sgf.length/6;i++) {
+			var stone=sgf.slice(i*6,i*6+6);     //B[bc];
+			//alert(stone);
+			if(stone.charAt(0)=='B') ch=COLOR.black;
+			else ch=COLOR.white;
+            var coords = newCoords(stone.charCodeAt(2)-97,stone.charCodeAt(3)-97);
+			//alert("put at x:"+coords.row+" y:"+coords.col+" color:"+ch);
+            board.putAStoneOnBoard(coords,ch);
+			last=ch;
+		}
+		board.render();
+        gameState.current = getOtherColor(last);
         updateGameState();
       }
 
@@ -686,6 +722,7 @@
 		<tr>
 			<td align="center" valign="top">
                 <textarea name="sgf" id="sgf" rows="3">Show sgf here</textarea>
+				<a id="replay" href="#" onclick="replay();">Replay</a>
 			</td>
 		</tr>
 		</table>

@@ -345,6 +345,7 @@
 					var inGroup=[];
 					for (tG in groupList) {
 						var tGroup=groupList[tG];
+						if (tGroup.length==0) continue;
 						for (tC in tGroup) {
 							if ( i-1>=0 && tGroup[tC] == (i-1)*GAME_SIZE+j
 								|| i+1<GAME_SIZE && tGroup[tC] == (i+1)*GAME_SIZE+j
@@ -358,6 +359,7 @@
 									inGroup.concat(tGroup);
 									tGroup=[];
 								}
+								break;
 							}
 						}
 					}
@@ -373,6 +375,7 @@
 		for (tG in groupList) {
 			var bAir=false;
 			var tGroup=groupList[tG];
+			if (tGroup.length==0) continue;
 			//alert(tGroup.join(","));
 			for (tC in tGroup) {
 				if (this.haveAir(tGroup[tC])) {

@@ -352,11 +352,11 @@
 								|| j-1>=0 && tGroup[tC] == i*GAME_SIZE+j-1) {
 								ofGroup=true;
 								if (!inGroup) {
-									inGroup=groupList[tG];
+									inGroup=tGroup;
 									inGroup.push(i*GAME_SIZE+j);
 								} else {
-									inGroup.concat(groupList[tG]);
-									groupList[tG]=[];
+									inGroup.concat(tGroup);
+									tGroup=[];
 								}
 							}
 						}
@@ -373,6 +373,7 @@
 		for (tG in groupList) {
 			var bAir=false;
 			var tGroup=groupList[tG];
+			alert(tGroup.join(","));
 			for (tC in tGroup) {
 				if (this.haveAir(tGroup[tC])) {
 					bAir=true;
@@ -387,9 +388,9 @@
 		}
       };
 
-      Board.prototype.haveAir = function(tC) {
-		var row=Math.floor(tC/GAME_SIZE);
-		var col=tC % GAME_SIZE;
+      Board.prototype.haveAir = function(xy) {
+		var row=Math.floor(xy/GAME_SIZE);
+		var col=xy % GAME_SIZE;
 		//up
 		if (row-1 >= 0) {
 			if (this.state[row-1][col] == EMPTY_SPACE) return true;

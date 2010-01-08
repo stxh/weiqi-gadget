@@ -391,7 +391,7 @@
 		var row=Math.floor(tC/GAME_SIZE);
 		var col=tC % GAME_SIZE;
 		//up
-		if (row-1 > 0) {
+		if (row-1 >= 0) {
 			if (this.state[row-1][col] == EMPTY_SPACE) return true;
 		}
 		//down
@@ -399,7 +399,7 @@
 			if (this.state[row+1][col] == EMPTY_SPACE) return true;
 		}
 		//left
-		if (col-1 > 0) {
+		if (col-1 >= 0) {
 			if (this.state[row][col-1] == EMPTY_SPACE) return true;
 		}
 		//right

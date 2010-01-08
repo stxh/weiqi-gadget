@@ -317,7 +317,7 @@
       Board.prototype.putAStone = function(coords) {
 		var ch=getMyColor();
 
-		this.pubAStoneOnBoard(coords,ch);
+		this.putAStoneOnBoard(coords,ch);
 
 		this.render();
 		this.endTurn();
@@ -555,7 +555,7 @@
 			if(stone.charAt(0)=='B') ch=COLOR.black;
 			else ch=COLOR.white;
             var coords = newCoords(stone.charAt(2)-97,stone.charAt(3)- j);
-            pubAStoneOnBoard(coords,ch);
+            putAStoneOnBoard(coords,ch);
 		}
 		board.render();
 	}

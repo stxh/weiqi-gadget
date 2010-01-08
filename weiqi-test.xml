@@ -355,8 +355,8 @@
 									inGroup=groupList[tG];
 									inGroup.push(i*GAME_SIZE+j);
 								} else {
-									inGroup.push(groupList[tG]);
-									groupList[tG]=null;
+									inGroup.concat(groupList[tG]);
+									groupList[tG]=[];
 								}
 							}
 						}

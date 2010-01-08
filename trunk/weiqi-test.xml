@@ -546,6 +546,7 @@
 		}
 
 		var sgf=$('sgf').innerHTML;
+		alter(sgf);
         gameState.moveHistory="";
 		var index=sgf.indexOf("B");
 		sgf=sgf.substring(index);
@@ -708,7 +709,7 @@
 		<tr>
 			<td align="center" valign="top">
                 <textarea name="sgf" id="sgf" rows="3">Show sgf here</textarea>
-				<a id="replay" fref="#" onclick="replay();">Replay</a>
+				<a id="replay" href="#" onclick="replay();">Replay</a>
 			</td>
 		</tr>
 		</table>

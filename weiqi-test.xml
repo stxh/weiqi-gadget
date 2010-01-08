@@ -342,8 +342,8 @@
 			for (var j=0; j< GAME_SIZE; j++) {
 				if (this.state[i][j]==ch) {
 					var ofGroup=false;
+					var inGroup=null;
 					for (tG in groupList) {
-						var inGroup=null;
 						var tGroup=groupList[tG];
 						for (tC in tGroup) {
 							if ( i-1>=0 && tGroup[tC] == (i-1)*GAME_SIZE+j
@@ -373,7 +373,7 @@
 		for (tG in groupList) {
 			var bAir=false;
 			var tGroup=groupList[tG];
-			alert(tGroup.join(","));
+			//alert(tGroup.join(","));
 			for (tC in tGroup) {
 				if (this.haveAir(tGroup[tC])) {
 					bAir=true;

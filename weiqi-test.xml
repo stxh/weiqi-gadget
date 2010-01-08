@@ -346,10 +346,10 @@
 						var inGroup=null;
 						var tGroup=groupList[tG];
 						for (tC in tGroup) {
-							if (tGroup[tC] == (i-1)*GAME_SIZE+j
-								|| tGroup[tC] == (i+1)*GAME_SIZE+j
-								|| tGroup[tC] == i*GAME_SIZE+j+1
-								|| tGroup[tC] == i*GAME_SIZE+j-1) {
+							if ( i-1>=0 && tGroup[tC] == (i-1)*GAME_SIZE+j
+								|| i+1<GAME_SIZE && tGroup[tC] == (i+1)*GAME_SIZE+j
+								|| j+1<GAME_SIZE && tGroup[tC] == i*GAME_SIZE+j+1
+								|| j-1>=0 && tGroup[tC] == i*GAME_SIZE+j-1) {
 								ofGroup=true;
 								if (!inGroup) {
 									inGroup=groupList[tG];
@@ -380,8 +380,7 @@
 				}
 			}
 			if (!bAir) {
-				for (tC in groupList[tG]) {
-				var tGroup=groupList[tG];
+				for (tC in tGroup) {
 					this.state[Math.floor(tGroup[tC]/GAME_SIZE)][tGroup[tC] % GAME_SIZE]=EMPTY_SPACE;
 				}
 			}

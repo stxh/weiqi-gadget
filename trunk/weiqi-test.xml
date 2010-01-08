@@ -550,7 +550,7 @@
 		var index=sgf.indexOf("B");
 		sgf=sgf.substring(index);
 		for (var i=0;i<sgf.length/6;i++) {
-			var stone=sgf.substring(i*6,6);     //B[bc];
+			var stone=sgf.slice(i*6,i*6+6);     //B[bc];
 			alert(stone);
 			if(stone.charAt(0)=='B') ch=COLOR.black;
 			else ch=COLOR.white;

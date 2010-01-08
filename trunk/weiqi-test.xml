@@ -545,7 +545,7 @@
 			}
 		}
 
-		var sgf=$('sgf').innerHTML;
+		var sgf=$('sgf').value;
         gameState.moveHistory="";
 		var index=sgf.indexOf("B");
 		sgf=sgf.substring(index);

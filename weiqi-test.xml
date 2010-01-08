@@ -353,7 +353,7 @@
 								|| j+1<GAME_SIZE && tGroup[tC] == i*GAME_SIZE+j+1
 								|| j-1>=0 && tGroup[tC] == i*GAME_SIZE+j-1) {
 								ofGroup=true;
-								if(i==3 && j==3) alert("in="+inGroub.join(",")+" t="+tGroup.join(","));
+								if(i==3 && j==3) alert("in="+inGroup.join(",")+" t="+ tGroup.join(","));
 								if (inGroup.length==0) {
 									inGroup=tGroup;
 									inGroup.push(i*GAME_SIZE+j);

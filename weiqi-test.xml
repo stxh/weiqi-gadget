@@ -314,16 +314,17 @@
 		board.putAStone(coords);
       };
 
+	  Board.prototype.putAStoneOnBoard(coords,ch) {
+        this.state[coords.row][coords.col]=ch;
+        recordMove(ch,coords);
+        gameState.last = coords;
+        this.checkCapture(ch);
+	  }
+
       Board.prototype.putAStone = function(coords) {
 		var ch=getMyColor();
 
-        this.state[coords.row][coords.col]=ch;
-
-        recordMove(ch,coords);
-
-        gameState.last = coords;
-
-        this.checkCapture(ch);
+		pubAStoneOnBoard(coords,ch);
 
 		this.render();
 		this.endTurn();
@@ -391,7 +392,7 @@
 		var row=Math.floor(tC/GAME_SIZE);
 		var col=tC % GAME_SIZE;
 		//up
-		if (row-1 > 0) {
+		if (row-1 >= 0) {
 			if (this.state[row-1][col] == EMPTY_SPACE) return true;
 		}
 		//down
@@ -399,7 +400,7 @@
 			if (this.state[row+1][col] == EMPTY_SPACE) return true;
 		}
 		//left
-		if (col-1 > 0) {
+		if (col-1 >= 0) {
 			if (this.state[row][col-1] == EMPTY_SPACE) return true;
 		}
 		//right
@@ -464,7 +465,7 @@
 				var coords = newCoords(i, j);
 				setPos(img, coordsToPos(coords));
 				this.root.appendChild(img);
-                var index=(gameState.moveHistory.lastIndexOf(String.fromCharCode(97+i)+String.fromCharCode(97+j))+4)/6;
+                var index=(gameState.moveHistory.lastIndexOf(String.fromCharCode(97+i,97+j))+4)/6;
 				img.title=index;
 			}
         }
@@ -528,16 +529,36 @@
 		updateGameState();
 	}
 
-      function rematch() {
+    function rematch() {
 		var myID=wave.getViewer().getId();
 		if (myID != gameState.black && myID != gameState.white) {
 			return;
 		}
         resetGame();
         updateGameState();
-      }
+    }
 
-      function resetGame() {
+	function replay() {
+		for (var i=0;i <GAME_SIZE; i++) {
+			for (var j=0; j< GAME_SIZE; j++) {
+				board.state[i][j]=EMPTY_SPACE;
+			}
+		}
+
+		var sgf=$('sgf').innerHTML;
+        gameState.moveHistory="";
+		var index=sgf.indexOf("B");
+		sgf=sgf.substring(index);
+		for (var i=0;i<sgf.length/6;i++) {
+			var stone=sgf.substring(i*6,6);     //B[bc];
+			if(stone.charAt(0)=='B') ch=COLOR.black;
+			else ch=COLOR.white;
+            var coords = newCoords(stone.charAt(2)-97,stone.charAt(3)- j);
+            pubAStoneOnBoard(coords,ch);
+		}
+	}
+
+    function resetGame() {
         gameState.current = COLOR.black;
         gameState.moveHistory = "";
         gameState.winner = -1;
@@ -548,7 +569,7 @@
         gameState.whiteName = "";
         board = new Board();
         board.render();
-      }
+    }
 
     function onLanguageChange(selectedLang) {
 		lang= selectedLang;
@@ -686,6 +707,7 @@
 		<tr>
 			<td align="center" valign="top">
                 <textarea name="sgf" id="sgf" rows="3">Show sgf here</textarea>
+				<a id="replay" fref="#" onclick="replay();">Replay</a>
 			</td>
 		</tr>
 		</table>

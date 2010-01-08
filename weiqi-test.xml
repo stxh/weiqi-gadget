@@ -6,7 +6,7 @@
 <!-- v0.5 2009-11-27 11:22:46 -->
 <!-- http://weiqi-gadget.googlecode.com/svn/trunk/weiqi-test.xml -->
 <Module>
-  <ModulePrefs title="weiqi" width="400" height="530">
+  <ModulePrefs title="weiqi" width="400" height="550">
     <Optional feature="content-rewrite">
       <Param name="include-tags"/>
     </Optional>
@@ -159,7 +159,7 @@
 
       function recordMove(ch,coords) {
 		var sgf = (ch==COLOR.white?"W":"B");
-		sgf += "["+String.fromCharCode(97+coords.row)+String.fromCharCode(97+coords.col)+"];";
+		sgf += "["+String.fromCharCode(97+coords.row,97+coords.col)+"];";
         gameState.moveHistory += sgf;
       }
 
@@ -314,13 +314,6 @@
 		board.putAStone(coords);
       };
 
-	  Board.prototype.putAStoneOnBoard(coords,ch) {
-        this.state[coords.row][coords.col]=ch;
-        recordMove(ch,coords);
-        gameState.last = coords;
-        this.checkCapture(ch);
-	  }
-
       Board.prototype.putAStone = function(coords) {
 		var ch=getMyColor();
 
@@ -330,10 +323,17 @@
 		this.endTurn();
       };
 
+	  Board.prototype.putAStoneOnBoard = function(coords,ch) {
+        this.state[coords.row][coords.col]=ch;
+        recordMove(ch,coords);
+        gameState.last = coords;
+        this.checkCapture(ch);
+	  };
+
       Board.prototype.checkCapture = function(ch) {
 		this.checkCaptureColor(getOtherColor(ch));
 		this.checkCaptureColor(ch);
-	  }
+	  };
 
       Board.prototype.checkCaptureColor = function(ch) {
 		var groupList=[];
@@ -408,7 +408,7 @@
 			if (this.state[row][col+1] == EMPTY_SPACE) return true;
 		}
 		return false;
-	  }
+	  };
 
       Board.onMouseMove = function(e) {
         if (!board) {
@@ -556,6 +556,7 @@
             var coords = newCoords(stone.charAt(2)-97,stone.charAt(3)- j);
             pubAStoneOnBoard(coords,ch);
 		}
+		board.render();
 	}
 
     function resetGame() {

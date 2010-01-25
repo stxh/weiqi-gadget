@@ -87,9 +87,16 @@
 			<td align="center" valign="top">
                 <textarea name="sgf" id="sgf" rows="3">Show sgf here</textarea>
 				<a id="replay" class="hide" href="#" onclick="replay();">Replay</a>
+			</td>
+		</tr>
+		<tr>
+			<td align="center" valign="top">
 				<a href="#" onclick="nav('begin');">|&lt;</a>
+                &nbsp;
 				<a href="#" onclick="nav('pre');">&lt;</a>
+                &nbsp;
 				<a href="#" onclick="nav('next');">&gt;</a>
+                &nbsp;
 				<a href="#" onclick="nav('end');">&gt;|</a>
 			</td>
 		</tr>

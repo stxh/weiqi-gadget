@@ -1,0 +1,72 @@
+/* CSS Document */
+      body {
+        font-family: 'lucida grande','tahoma','arial','verdana','sans-serif';
+        font-size: 11px;
+      }
+      td {
+        font-size: 11px;
+      }
+      a {
+        text-decoration: none;
+        color: #3366CC;
+      }
+      a:visited {
+        color: #3366CC;
+      }
+      a:hover {
+        color: red;
+      }
+      #canvas {
+        width: 223px;
+        height: 203px;
+      }
+      #board {
+        background-image: url('http://weiqi-gadget.googlecode.com/svn/trunk/weiqiboard.png');
+        background-position: left;
+        width: 400px;
+        height: 400px;
+        position: relative;
+      }
+      #promotion, #selectColor, #help {
+        border: 1px solid black;
+        width: 128px;
+        height: 40px;
+        left: 16px;
+        top: 60px;
+        position: absolute;
+        background-color: white;
+      }
+      #help {
+        width: 160px;
+        height: 160px;
+        left: 0px;
+        top: 0px;
+      }
+      .hide {
+        display: none;
+      }
+      .piece {
+        border: 0;
+        width: 20px;
+        height: 20px;
+        position: absolute;
+      }
+      .cursor {
+        border: 2px solid red;
+        margin-left: 6px;
+        margin-top: 6px;
+        width: 4px;
+        height: 4px;
+        position: absolute;
+      }
+      .expand {
+        width: 100%;
+        height: 100%;
+      }
+      .selectable {
+        cursor: pointer;
+      }
+	textarea
+	{
+		width:95%;
+	}

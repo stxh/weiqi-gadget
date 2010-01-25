@@ -479,7 +479,7 @@
         updateGameState();
       }
 
-	function nav("offer") {
+	function nav(offer) {
 		var sgf=$('sgf').value;
         gameState.moveHistory="";
 		var index=sgf.indexOf("B");

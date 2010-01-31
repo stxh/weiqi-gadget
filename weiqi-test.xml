@@ -7,7 +7,7 @@
 <!-- v0.5 2009-11-27 11:22:46 -->
 <!-- http://weiqi-gadget.googlecode.com/svn/trunk/weiqi-test.xml -->
 <Module>
-  <ModulePrefs title="weiqi" width="400" height="550">
+  <ModulePrefs title="weiqi" width="400" height="570">
     <Optional feature="content-rewrite">
       <Param name="include-tags"/>
     </Optional>

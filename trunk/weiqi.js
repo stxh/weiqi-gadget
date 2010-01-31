@@ -479,24 +479,8 @@
         updateGameState();
       }
 
-	function nav("offer") {
-		var sgf=$('sgf').value;
-        gameState.moveHistory="";
-		var index=sgf.indexOf("B");
-		sgf=sgf.substring(index);
-		//alert(sgf);
-		var last;
-		for (var i=0;i<sgf.length/6;i++) {
-			var stone=sgf.slice(i*6,i*6+6);     //B[bc];
-			//alert(stone);
-			if(stone.charAt(0)=='B') ch=COLOR.black;
-			else ch=COLOR.white;
-            var coords = newCoords(stone.charCodeAt(2)-97,stone.charCodeAt(3)-97);
-			//alert("put at x:"+coords.row+" y:"+coords.col+" color:"+ch);
-            board.putAStoneOnBoard(coords,ch);
-			last=ch;
-		}
-		board.render();
+	function nav(offer) {
+
       }
 
       function resetGame() {

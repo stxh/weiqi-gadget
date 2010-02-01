@@ -201,10 +201,10 @@ function Board() {
 	this.state=new Array(GAME_SIZE);
 	for (var i=0;i <GAME_SIZE; i++) {
 		this.state[i]=new Array(GAME_SIZE);
-		for (var j=0; j< GAME_SIZE; j++) {
-			this.state[i][j]=EMPTY_SPACE;
-		}
 	}
+
+    clearBoarState();
+
 	this.gameOver = false;
 }
 
@@ -461,11 +461,8 @@ function replay() {
 	if (myID != gameState.black && myID != gameState.white) {
 		return;
 	}
-	for (var i=0;i <GAME_SIZE; i++) {
-		for (var j=0; j< GAME_SIZE; j++) {
-			board.state[i][j]=EMPTY_SPACE;
-		}
-	}
+
+    clearBoarState();
 
 	var sgf=$('sgf').value;
     gameState.moveHistory="";
@@ -505,6 +502,7 @@ function nav(offer) {
 				navState.showIndex=1;
 				return;
 			}
+			alert(navState.showIndex);
 			break;
 		case "next":
 			navState.showIndex++;
@@ -522,11 +520,9 @@ function nav(offer) {
 	var sgf=navState.backupHistory;
 	var index=sgf.indexOf("B");
 	sgf=sgf.substring(index);
-	for (var i=0;i <GAME_SIZE; i++) {
-		for (var j=0; j< GAME_SIZE; j++) {
-			board.state[i][j]=EMPTY_SPACE;
-		}
-	}
+
+    clearBoarState();
+
 	for (var i=0;i<navState.showIndex;i++) {
 		var stone=sgf.slice(i*6,i*6+6);     //B[bc];
 		//alert(stone);
@@ -537,6 +533,14 @@ function nav(offer) {
 	    board.putAStoneOnBoard(coords,ch);
 	}
 	board.render();
+}
+
+function clearBoarState() {
+	for (var i=0;i <GAME_SIZE; i++) {
+		for (var j=0; j< GAME_SIZE; j++) {
+			board.state[i][j]=EMPTY_SPACE;
+		}
+	}
 }
 
 function resetGame() {

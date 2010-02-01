@@ -503,7 +503,6 @@ function nav(offer) {
 				navState.showIndex=1;
 				return;
 			}
-			alert(navState.showIndex);
 			break;
 		case "next":
 			navState.showIndex++;

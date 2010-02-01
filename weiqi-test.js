@@ -332,6 +332,9 @@ Board.onMouseMove = function(e) {
 	if (!isMyTurn()) {
 	  return false;
 	}
+    if (navState.bShowNav) {
+		return false;
+	}
 
 	var pos = getMousePos(e);
 	var coords = posToCoords(pos);
@@ -489,7 +492,7 @@ function nav(offer) {
 	if (!navState.bShowNav) {
   		navState.bShowNav=true;
 		navState.backupHistory=gameState.moveHistory;
-		navState.showIndex=navState.backupHistory.length/6;
+		navState.showIndex=navState.backupHistory.length/6-1;
 	}
 
 	switch(offer) {
@@ -498,8 +501,11 @@ function nav(offer) {
 			break;
 		case "pre":
 			navState.showIndex--;
-			if (navState.showIndex<0) navState.showIndex=0;
-			return;
+			if (navState.showIndex<0) {
+				navState.showIndex=0;
+				return;
+			}
+			break;
 		case "next":
 			navState.showIndex++;
 			if (navState.showIndex>=navState.backupHistory.length/6) navState.showIndex=navState.backupHistory.length/6;
@@ -512,7 +518,6 @@ function nav(offer) {
 	if (navState.showIndex==navState.backupHistory.length/6) {
   		navState.bShowNav=false;
 		gameState.moveHistory=navState.backupHistory;
-		return;
 	}
 
 	var sgf=navState.backupHistory;

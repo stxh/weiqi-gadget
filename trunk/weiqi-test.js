@@ -201,9 +201,10 @@ function Board() {
 	this.state=new Array(GAME_SIZE);
 	for (var i=0;i <GAME_SIZE; i++) {
 		this.state[i]=new Array(GAME_SIZE);
+		for (var j=0; j< GAME_SIZE; j++) {
+			this.state[i][j]=EMPTY_SPACE;
+		}
 	}
-
-    clearBoarState();
 
 	this.gameOver = false;
 }

@@ -523,6 +523,7 @@ function nav(offer) {
 	sgf=sgf.substring(index);
 
     clearBoarState();
+    gameState.moveHistory="";
 
 	for (var i=0;i<navState.showIndex;i++) {
 		var stone=sgf.slice(i*6,i*6+6);     //B[bc];

@@ -497,12 +497,12 @@ function nav(offer) {
 
 	switch(offer) {
 		case "begin":
-			navState.showIndex=0;
+			navState.showIndex=1;
 			break;
 		case "pre":
 			navState.showIndex--;
-			if (navState.showIndex<0) {
-				navState.showIndex=0;
+			if (navState.showIndex<1) {
+				navState.showIndex=1;
 				return;
 			}
 			break;
@@ -517,7 +517,6 @@ function nav(offer) {
 
 	if (navState.showIndex==navState.backupHistory.length/6) {
   		navState.bShowNav=false;
-		gameState.moveHistory=navState.backupHistory;
 	}
 
 	var sgf=navState.backupHistory;
@@ -536,7 +535,6 @@ function nav(offer) {
 	    var coords = newCoords(stone.charCodeAt(2)-97,stone.charCodeAt(3)-97);
 		//alert("put at x:"+coords.row+" y:"+coords.col+" color:"+ch);
 	    board.putAStoneOnBoard(coords,ch);
-		last=ch;
 	}
 	board.render();
 }

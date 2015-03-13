@@ -1,0 +1,1 @@
+weiqi google wave gadget
